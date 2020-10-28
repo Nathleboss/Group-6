@@ -54,7 +54,7 @@ gameOverSound = pygame.mixer.Sound('gameover.wav')
 pygame.mixer.music.load('background.mid')
 
 # Set up images.
-playerImage = pygame.image.load('IMG_1587.JPG')
+playerImage = pygame.image.load('cherry.png')
 playerRect = playerImage.get_rect()
 baddieImage = pygame.image.load('leart lpb.jpg')
 
