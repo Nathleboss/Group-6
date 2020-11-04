@@ -16,5 +16,5 @@ for name, grade in student_and_grade.items():
     if grade > grade_average:
         students_above_avg.append(grade)
 
-print(grade_average)
+print(grade_average, s.stdev(student_and_grade.values()))
 print(len(students_above_avg))
