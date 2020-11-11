@@ -1,16 +1,16 @@
 import pygame, random, sys
 from pygame.locals import *
 
-WINDOWWIDTH = 600
+WINDOWWIDTH = 900
 WINDOWHEIGHT = 600
-TEXTCOLOR = (0, 0, 0)
-BACKGROUNDCOLOR = (255, 255, 255)
+TEXTCOLOR = (255, 0, 0)
+BACKGROUNDCOLOR = (1, 195, 255)
 FPS = 60
 BADDIEMINSIZE = 10
 BADDIEMAXSIZE = 40
 BADDIEMINSPEED = 1
 BADDIEMAXSPEED = 8
-ADDNEWBADDIERATE = 6
+ADDNEWBADDIERATE = 20
 PLAYERMOVERATE = 5
 
 def terminate():
@@ -130,7 +130,7 @@ while True:
         if baddieAddCounter == ADDNEWBADDIERATE:
             baddieAddCounter = 0
             baddieSize = random.randint(BADDIEMINSIZE, BADDIEMAXSIZE)
-            newBaddie = {'rect': pygame.Rect(WINDOWWIDTH+baddieSize,random.randint(0,WINDOWHEIGHT-baddieSize), baddieSize, baddieSize),
+            newBaddie = {'rect': pygame.Rect(WINDOWWIDTH+baddieSize,random.randint(0,WINDOWHEIGHT/2-baddieSize), baddieSize, baddieSize),
                         'speed': random.randint(BADDIEMINSPEED, BADDIEMAXSPEED),
                         'surface':pygame.transform.scale(baddieImage, (baddieSize, baddieSize)),
                         }
@@ -163,6 +163,13 @@ while True:
 
         # Draw the game world on the window.
         windowSurface.fill(BACKGROUNDCOLOR)
+
+        ### image du sol
+        ground = pygame.image.load("Sol.png").convert()
+        ## image_height = np.size(ground, 0) # trouver la hauteur de l'image par une fonction
+        windowSurface.blit(ground, (0,WINDOWHEIGHT-74)) # trouvé 74 en cherchant les dimensions de l'image
+        windowSurface.blit(ground, (450, WINDOWHEIGHT - 74)) # même chose pour le 450
+        pygame.display.flip()
 
         # Draw the score and top score.
         drawText('Score: %s' % (score), font, windowSurface, 10, 0)
