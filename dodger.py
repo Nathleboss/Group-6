@@ -22,7 +22,7 @@ def waitForPlayerToPressKey():
         for event in pygame.event.get():
             if event.type == QUIT:
                 terminate()
-            if event.type == KEYDOWN:
+            if event.type == KEYDOWN :
                 if event.key == K_ESCAPE: # Pressing ESC quits.
                     terminate()
                 return
@@ -130,7 +130,7 @@ while True:
         if baddieAddCounter == ADDNEWBADDIERATE:
             baddieAddCounter = 0
             baddieSize = random.randint(BADDIEMINSIZE, BADDIEMAXSIZE)
-            newBaddie = {'rect': pygame.Rect(random.randint(0, WINDOWWIDTH - baddieSize), 0 - baddieSize, baddieSize, baddieSize),
+            newBaddie = {'rect': pygame.Rect(WINDOWWIDTH+baddieSize,random.randint(0,WINDOWHEIGHT-baddieSize), baddieSize, baddieSize),
                         'speed': random.randint(BADDIEMINSPEED, BADDIEMAXSPEED),
                         'surface':pygame.transform.scale(baddieImage, (baddieSize, baddieSize)),
                         }
@@ -150,15 +150,15 @@ while True:
         # Move the baddies down.
         for b in baddies:
             if not reverseCheat and not slowCheat:
-                b['rect'].move_ip(0, b['speed'])
+                b['rect'].move_ip(-b['speed'], 0)
             elif reverseCheat:
-                b['rect'].move_ip(0, -5)
+                b['rect'].move_ip(-5, 0)
             elif slowCheat:
-                b['rect'].move_ip(0, 1)
+                b['rect'].move_ip(1, 0)
 
         # Delete baddies that have fallen past the bottom.
         for b in baddies[:]:
-            if b['rect'].top > WINDOWHEIGHT:
+            if b['rect'].left < 0:
                 baddies.remove(b)
 
         # Draw the game world on the window.
