@@ -12,6 +12,7 @@ BADDIEMAXSIZE = 40
 BADDIEMINSPEED = 1
 BADDIEMAXSPEED = 8
 ADDNEWBADDIERATE = 20
+ADDNEWARBRERATE = 40
 PLAYERMOVERATE = 5
 
 
@@ -61,7 +62,7 @@ playerImage = pygame.image.load('cherry.png')
 playerRect = playerImage.get_rect()
 baddieImage = pygame.image.load('leart lpb.jpg')
 ArbreImage = pygame.image.load("Arbre.png")
-Arbre_height =  ArbreImage.get_height()
+ArbreImage_height =  ArbreImage.get_height()
 
 # Show the "Start" screen.
 windowSurface.fill(BACKGROUNDCOLOR)
@@ -75,6 +76,9 @@ topScore = 0
 #importation du sol qui défile
 ground = pygame.image.load("Sol.png").convert()
 ground_width, ground_height = ground.get_width(),ground.get_height()
+ARBREMINSIZE_height = 60
+ARBREMAXSIZE_height = WINDOWHEIGHT/2 - ground_height
+
 
 class Background(pygame.sprite.Sprite):
     def __init__(self, number, *args):
@@ -102,11 +106,13 @@ Background(2, group)
 while True:
     # Set up the start of the game.
     baddies = []
+    arbres = []
     score = 0
     playerRect.topleft = (WINDOWWIDTH / 2, WINDOWHEIGHT/2)
     moveLeft = moveRight = moveUp = moveDown = False
     reverseCheat = slowCheat = False
     baddieAddCounter = 0
+    arbreAddCounter = 0
     pygame.mixer.music.play(-1, 0.0)
 
     while True: # The game loop runs while the game part is playing.
@@ -168,7 +174,17 @@ while True:
                         }
 
             baddies.append(newBaddie)
+        #Add new arbres, if needed :
+        if arbreAddCounter == ADDNEWARBRERATE:
+            arbreAddCounter = 0
+            arbreSize_height = random.randint(ARBREMINSIZE_height,ARBREMAXSIZE_height)
+            arbreSize_width = arbreSize_height*93/122
+            newArbre = {'rect': pygame.Rect(WINDOWWIDTH+arbreSize_width,300,arbreSize_width,arbreSize_height),
+                        'speed': -1,
+                        'surface': pygame.transform.scale(ArbreImage,(arbreSize_width,arbreSize_height)),
+                        }
 
+            arbres.append(newArbre)
         # Move the player around.
         if moveLeft and playerRect.left > 0:
             playerRect.move_ip(-1 * PLAYERMOVERATE, 0)
@@ -179,7 +195,7 @@ while True:
         if moveDown and playerRect.bottom < WINDOWHEIGHT:
             playerRect.move_ip(0, PLAYERMOVERATE)
 
-        # Move the baddies down.
+        # Move the baddies down + arbres left.
         for b in baddies:
             if not reverseCheat and not slowCheat:
                 b['rect'].move_ip(-b['speed'], 0)
@@ -187,18 +203,26 @@ while True:
                 b['rect'].move_ip(-5, 0)
             elif slowCheat:
                 b['rect'].move_ip(1, 0)
+        for a in arbres :
+            if not reverseCheat:
+                a['rect'].move_ip(a['speed'],0)
+            elif reverseCheat:
+                a['rect'].move_ip(-a['speed'], 0)
 
-        # Delete baddies that have fallen past the bottom.
+        # Delete baddies + arbres that have fallen past the left bordure.
         for b in baddies[:]:
             if b['rect'].left < 0:
                 baddies.remove(b)
+        for a in arbres[:]:
+            if a['rect'].left < 0:
+                arbres.remove(a)
 
         # Draw the game world on the window.
         windowSurface.fill(BACKGROUNDCOLOR)
         group.update()
         group.draw(windowSurface)
-        windowSurface.blit(ArbreImage,(450,WINDOWHEIGHT-Arbre_height -ground_height))
-        pygame.display.flip()
+        #windowSurface.blit(ArbreImage,(450,WINDOWHEIGHT-Arbre_height -ground_height))
+        #pygame.display.flip()
         ### image du sol
 
        # windowSurface.blit(ground, (0,WINDOWHEIGHT-ground_height))
