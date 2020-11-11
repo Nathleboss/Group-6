@@ -71,7 +71,7 @@ while True:
     # Set up the start of the game.
     baddies = []
     score = 0
-    playerRect.topleft = (WINDOWWIDTH / 2, WINDOWHEIGHT - 50)
+    playerRect.topleft = (WINDOWWIDTH / 2, WINDOWHEIGHT/2)
     moveLeft = moveRight = moveUp = moveDown = False
     reverseCheat = slowCheat = False
     baddieAddCounter = 0
@@ -186,7 +186,7 @@ while True:
         pygame.display.update()
 
         # Check if any of the baddies have hit the player.
-        if playerHasHitBaddie(playerRect, baddies) or playerRect.bottom > ground_height:
+        if playerHasHitBaddie(playerRect, baddies) or playerRect.bottom > WINDOWHEIGHT - ground_height:
             if score > topScore:
                 topScore = score # set new top score
             break
