@@ -204,8 +204,8 @@ while True:
             elif slowCheat:
                 b['rect'].move_ip(1, 0)
         for a in arbres :
-            if not reverseCheat:
-                a['rect'].move_ip(a['speed'],0)
+            if not reverseCheat:                #TODO placer bottomright etc
+                a['rect'].move_ip(a['speed'], 0)
             elif reverseCheat:
                 a['rect'].move_ip(-a['speed'], 0)
 
