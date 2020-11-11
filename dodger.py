@@ -1,10 +1,11 @@
 import pygame, random, sys
 from pygame.locals import *
 
+
 WINDOWWIDTH = 900
 WINDOWHEIGHT = 600
 TEXTCOLOR = (255, 0, 0)
-BACKGROUNDCOLOR = (1, 195, 255)
+BACKGROUNDCOLOR = (106, 201, 223)
 FPS = 60
 BADDIEMINSIZE = 10
 BADDIEMAXSIZE = 40
@@ -78,7 +79,7 @@ while True:
 
     while True: # The game loop runs while the game part is playing.
         score += 1 # Increase score.
-
+        #pygame.mixer.music.stop()
         for event in pygame.event.get():
             if event.type == QUIT:
                 terminate()
@@ -166,9 +167,9 @@ while True:
 
         ### image du sol
         ground = pygame.image.load("Sol.png").convert()
-        ## image_height = np.size(ground, 0) # trouver la hauteur de l'image par une fonction
-        windowSurface.blit(ground, (0,WINDOWHEIGHT-74)) # trouvé 74 en cherchant les dimensions de l'image
-        windowSurface.blit(ground, (450, WINDOWHEIGHT - 74)) # même chose pour le 450
+        ground_width, ground_height = ground.get_width(),ground.get_height()
+        windowSurface.blit(ground, (0,WINDOWHEIGHT-ground_height))
+        windowSurface.blit(ground, (ground_width, WINDOWHEIGHT - ground_height))
         pygame.display.flip()
 
         # Draw the score and top score.
@@ -185,7 +186,7 @@ while True:
         pygame.display.update()
 
         # Check if any of the baddies have hit the player.
-        if playerHasHitBaddie(playerRect, baddies):
+        if playerHasHitBaddie(playerRect, baddies) or playerRect.bottom > ground_height:
             if score > topScore:
                 topScore = score # set new top score
             break
