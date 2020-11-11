@@ -60,6 +60,8 @@ pygame.mixer.music.set_volume(0.08)
 playerImage = pygame.image.load('cherry.png')
 playerRect = playerImage.get_rect()
 baddieImage = pygame.image.load('leart lpb.jpg')
+ArbreImage = pygame.image.load("Arbre.png")
+Arbre_height =  ArbreImage.get_height()
 
 # Show the "Start" screen.
 windowSurface.fill(BACKGROUNDCOLOR)
@@ -195,6 +197,7 @@ while True:
         windowSurface.fill(BACKGROUNDCOLOR)
         group.update()
         group.draw(windowSurface)
+        windowSurface.blit(ArbreImage,(450,WINDOWHEIGHT-Arbre_height -ground_height))
         pygame.display.flip()
         ### image du sol
 
