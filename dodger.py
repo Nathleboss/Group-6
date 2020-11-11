@@ -14,6 +14,7 @@ BADDIEMAXSPEED = 8
 ADDNEWBADDIERATE = 20
 PLAYERMOVERATE = 5
 
+
 def terminate():
     pygame.quit()
     sys.exit()
@@ -52,7 +53,8 @@ font = pygame.font.SysFont(None, 48)
 
 # Set up sounds.
 gameOverSound = pygame.mixer.Sound('roblox.wav')
-pygame.mixer.music.load('background.mid')
+pygame.mixer.music.load('Fortunate Son.wav')
+pygame.mixer.music.set_volume(0.08)
 
 # Set up images.
 playerImage = pygame.image.load('cherry.png')
@@ -67,6 +69,34 @@ pygame.display.update()
 waitForPlayerToPressKey()
 
 topScore = 0
+
+#importation du sol qui défile
+ground = pygame.image.load("Sol.png").convert()
+ground_width, ground_height = ground.get_width(),ground.get_height()
+
+class Background(pygame.sprite.Sprite):
+    def __init__(self, number, *args):
+        self.image = pygame.image.load('Sol.png').convert()
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (0,WINDOWHEIGHT-ground_height)
+        self._layer = -10
+        pygame.sprite.Sprite.__init__(self, *args)
+        self.moved = 0
+        self.number = number
+        self.rect.x = self.rect.width * self.number
+
+    def update(self):
+        self.rect.move_ip(-1, 0)
+        self.moved += 1
+
+        if self.moved >= self.rect.width:
+            self.rect.x = self.rect.width * self.number
+            self.moved = 0
+group = pygame.sprite.LayeredUpdates()
+Background(0, group)
+Background(1, group)
+Background(2, group)
+
 while True:
     # Set up the start of the game.
     baddies = []
@@ -79,7 +109,6 @@ while True:
 
     while True: # The game loop runs while the game part is playing.
         score += 1 # Increase score.
-        #pygame.mixer.music.stop()
         for event in pygame.event.get():
             if event.type == QUIT:
                 terminate()
@@ -164,13 +193,14 @@ while True:
 
         # Draw the game world on the window.
         windowSurface.fill(BACKGROUNDCOLOR)
-
-        ### image du sol
-        ground = pygame.image.load("Sol.png").convert()
-        ground_width, ground_height = ground.get_width(),ground.get_height()
-        windowSurface.blit(ground, (0,WINDOWHEIGHT-ground_height))
-        windowSurface.blit(ground, (ground_width, WINDOWHEIGHT - ground_height))
+        group.update()
+        group.draw(windowSurface)
         pygame.display.flip()
+        ### image du sol
+
+       # windowSurface.blit(ground, (0,WINDOWHEIGHT-ground_height))
+        #windowSurface.blit(ground, (ground_width, WINDOWHEIGHT - ground_height))
+        #pygame.display.flip()
 
         # Draw the score and top score.
         drawText('Score: %s' % (score), font, windowSurface, 10, 0)
