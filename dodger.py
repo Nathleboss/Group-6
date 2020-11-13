@@ -36,6 +36,12 @@ def playerHasHitBaddie(playerRect, baddies):
             return True
     return False
 
+def playerHasHitArbre(playerRect,arbres):
+    for a in arbres:
+        if playerRect.colliderect(a['rect']):             #TODO masks !!!!
+                return True
+    return False
+
 def drawText(text, font, surface, x, y):
     textobj = font.render(text, 1, TEXTCOLOR)
     textrect = textobj.get_rect()
@@ -101,7 +107,7 @@ class Background(pygame.sprite.Sprite):
 group = pygame.sprite.LayeredUpdates()
 Background(0, group)
 Background(1, group)
-Background(2, group)
+Background(2, group)                ##Tout ça, les ckground(012,group) c'est pour faire défiler le sol #TODO peut-être changer façon de faire
 
 while True:
     # Set up the start of the game.
@@ -172,7 +178,7 @@ while True:
             baddieSize = random.randint(BADDIEMINSIZE, BADDIEMAXSIZE)
             newBaddie = {'rect': pygame.Rect(WINDOWWIDTH+baddieSize,random.randint(0,WINDOWHEIGHT/2-baddieSize), baddieSize, baddieSize),
                         'speed': random.randint(BADDIEMINSPEED, BADDIEMAXSPEED),
-                        'surface':pygame.transform.scale(baddieImage, (baddieSize, baddieSize)),
+                        'surface': pygame.transform.scale(baddieImage, (baddieSize, baddieSize)),
                         }
 
             baddies.append(newBaddie)
@@ -180,10 +186,11 @@ while True:
         if arbreAddCounter == ADDNEWARBRERATE:
             arbreAddCounter = 0
             arbreSize_height = random.randint(ARBREMINSIZE_height,ARBREMAXSIZE_height)
-            arbreSize_width = arbreSize_height*93/122
+            arbreSize_width = arbreSize_height*93/122           #*93/122 car dimension de l'image de base
             newArbre = {'rect': pygame.Rect(WINDOWWIDTH+round(arbreSize_width),WINDOWHEIGHT-ground_height-arbreSize_height,round(arbreSize_width),round(arbreSize_height)),
                         'speed': -1,
                         'surface': pygame.transform.scale(ArbreImage,(round(arbreSize_width),round(arbreSize_height))),
+                        'mask': pygame.mask.from_surface(pygame.transform.scale(ArbreImage,(round(arbreSize_width),round(arbreSize_height)))),
                         }
 
             arbres.append(newArbre)
@@ -206,7 +213,7 @@ while True:
             elif slowCheat:
                 b['rect'].move_ip(1, 0)
         for a in arbres :
-            if not reverseCheat:                #TODO placer bottomright etc
+            if not reverseCheat:
                 a['rect'].move_ip(a['speed'], 0)
             elif reverseCheat:
                 a['rect'].move_ip(-a['speed'], 0)
@@ -248,7 +255,7 @@ while True:
         pygame.display.update()
 
         # Check if any of the baddies have hit the player.
-        if playerHasHitBaddie(playerRect, baddies) or playerRect.bottom > WINDOWHEIGHT - ground_height:
+        if playerHasHitBaddie(playerRect, baddies) or playerRect.bottom > WINDOWHEIGHT - ground_height or playerHasHitArbre(playerRect, arbres):
             if score > topScore:
                 topScore = score # set new top score
             break
