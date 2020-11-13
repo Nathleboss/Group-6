@@ -12,7 +12,7 @@ BADDIEMAXSIZE = 40
 BADDIEMINSPEED = 1
 BADDIEMAXSPEED = 8
 ADDNEWBADDIERATE = 20
-ADDNEWARBRERATE = 40
+ADDNEWARBRERATE = 100
 PLAYERMOVERATE = 5
 
 
@@ -165,6 +165,8 @@ while True:
         # Add new baddies at the top of the screen, if needed.
         if not reverseCheat and not slowCheat:
             baddieAddCounter += 1
+            arbreAddCounter += 1
+
         if baddieAddCounter == ADDNEWBADDIERATE:
             baddieAddCounter = 0
             baddieSize = random.randint(BADDIEMINSIZE, BADDIEMAXSIZE)
@@ -179,9 +181,9 @@ while True:
             arbreAddCounter = 0
             arbreSize_height = random.randint(ARBREMINSIZE_height,ARBREMAXSIZE_height)
             arbreSize_width = arbreSize_height*93/122
-            newArbre = {'rect': pygame.Rect(WINDOWWIDTH+arbreSize_width,300,arbreSize_width,arbreSize_height),
+            newArbre = {'rect': pygame.Rect(WINDOWWIDTH+round(arbreSize_width),WINDOWHEIGHT-ground_height-arbreSize_height,round(arbreSize_width),round(arbreSize_height)),
                         'speed': -1,
-                        'surface': pygame.transform.scale(ArbreImage,(arbreSize_width,arbreSize_height)),
+                        'surface': pygame.transform.scale(ArbreImage,(round(arbreSize_width),round(arbreSize_height))),
                         }
 
             arbres.append(newArbre)
@@ -239,6 +241,9 @@ while True:
         # Draw each baddie.
         for b in baddies:
             windowSurface.blit(b['surface'], b['rect'])
+
+        for a in arbres :
+            windowSurface.blit(a['surface'], a['rect'])
 
         pygame.display.update()
 
