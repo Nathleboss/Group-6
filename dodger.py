@@ -64,7 +64,10 @@ pygame.mixer.music.load('Fortunate Son.wav')
 pygame.mixer.music.set_volume(0.08)
 
 # Set up images.
-playerImage = pygame.image.load('cherry.png')
+heli1Image = pygame.image.load('heli-1.png')
+heli1_width, heli1_height = heli1Image.get_width(), heli1Image.get_height()
+heli1_required_height = 150
+playerImage = pygame.transform.scale(heli1Image, (heli1_required_height, round(heli1_required_height*heli1_height/heli1_width)))
 playerRect = playerImage.get_rect()
 baddieImage = pygame.image.load('leart lpb.jpg')
 ArbreImage = pygame.image.load("Arbre.png")
