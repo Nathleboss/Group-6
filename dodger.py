@@ -38,7 +38,9 @@ def playerHasHitBaddie(playerRect, baddies):
 
 def playerHasHitArbre(playerRect,arbres):
     for a in arbres:
-        if playerRect.colliderect(a['rect']):             #TODO masks !!!!
+        if playerRect.colliderect(a['rect']):
+            if pygame.sprite.collide_mask(a['mask'],playerMask):
+                     #TODO masks !!!!
                 return True
     return False
 
@@ -67,11 +69,14 @@ pygame.mixer.music.set_volume(0.08)
 heli1Image = pygame.image.load('heli-1.png')
 heli1_width, heli1_height = heli1Image.get_width(), heli1Image.get_height()
 heli1_required_height = 150
-playerImage = pygame.transform.scale(heli1Image, (heli1_required_height, round(heli1_required_height*heli1_height/heli1_width)))
+playerImage = pygame.transform.scale(heli1Image, (heli1_required_height, round(heli1_required_height*heli1_height/heli1_width))).convert()
 playerRect = playerImage.get_rect()
+playerMask = pygame.mask.from_surface(playerImage)
+
 baddieImage = pygame.image.load('plane_image.png') #TODO regarder la taille pour garder les proportions
-ArbreImage = pygame.image.load("Arbre.png")
+ArbreImage = pygame.image.load("Arbre.png").convert()
 ArbreImage_height =  ArbreImage.get_height()
+
 
 # Show the "Start" screen.
 windowSurface.fill(BACKGROUNDCOLOR)
