@@ -2,7 +2,8 @@ import pygame, sys, random
 from pygame.locals import *
 
 BACKGROUNDCOLOR = (106, 201, 223)
-TEXTCOLOR = (255, 0, 0)
+RED = (255, 0, 0)
+YELLOW = (255,255,0)
 BLACK = (0, 0, 0)
 WINDOWWIDTH = 900
 WINDOWHEIGHT = 600
@@ -16,7 +17,7 @@ def terminate():
     pygame.quit()
     sys.exit()
 
-def drawText(text, font, surface, x, y):
+def drawText(text, font, surface, x, y, TEXTCOLOR):
     textobj = font.render(text, 1, TEXTCOLOR)
     textrect = textobj.get_rect()
     textrect.topleft = (x, y)
@@ -116,8 +117,23 @@ class Bullet(pygame.sprite.Sprite):
 class Coin(pygame.sprite.Sprite):               #pourquoi pas faire une superclass qui contient les pièces et les bonus ?
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image =            #mettre une animation avec plusieurs modèles de coins qui tourne comme hélico
+        self.image = pygame.image.load("Coin.png")      #mettre une animation avec plusieurs modèles de coins qui tourne comme hélico
+        self.image = pygame.transform.scale(self.image,(50,50))
+        self.rect = self.image.get_rect()
+        self.rect.x = WINDOWWIDTH
+        self.rect.y = random.randrange(0,WINDOWHEIGHT-100)
+        self.speedx = 3
+        self.speedy = random.randrange(-3,3)
+        self.mask = pygame.mask.from_surface(self.image)
 
+    def update(self):
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
+        if self.rect.left < -self.rect.width or abs(self.rect.top) > WINDOWHEIGHT :       #si la pièce sort sur la gauche ou en haut/bas
+            self.rect.x = WINDOWWIDTH
+            self.rect.y = random.randrange(0, WINDOWHEIGHT - 100)
+            self.speedx = 3
+            self.speedy = random.randrange(-3, 3)
 # initialize pygame and create window + police d'écriture (fonts)
 pygame.init()
 mainClock = pygame.time.Clock()
@@ -132,8 +148,8 @@ pygame.mixer.music.set_volume(0.08)
 
 # Show the "Start" screen.
 windowSurface.fill(BACKGROUNDCOLOR)
-drawText('Dodger', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3))
-drawText('Press a key to start.', font, windowSurface, (WINDOWWIDTH / 3) - 30, (WINDOWHEIGHT / 3) + 50)
+drawText('Dodger', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3),RED)
+drawText('Press a key to start.', font, windowSurface, (WINDOWWIDTH / 3) - 30, (WINDOWHEIGHT / 3) + 50,RED)
 pygame.display.update()
 waitForPlayerToPressKey()
 
@@ -143,12 +159,17 @@ topScore = 0
 all_sprites = pygame.sprite.Group()
 mobs = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
+coins = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
 for i in range(6):  # Nombre de mobs visibles à l'écran en même temps
     m = Mob()
     all_sprites.add(m)
     mobs.add(m)
+for i in range(2):   #Pareil pour les coins
+    c = Coin()
+    all_sprites.add(c)
+    coins.add(c)
 
 # Game loop
 running = True
@@ -190,8 +211,9 @@ while True:
         # Draw / render
         windowSurface.fill(BACKGROUNDCOLOR)
         all_sprites.draw(windowSurface)
-        drawText('Score: %s' % (score), font, windowSurface, 10, 0)
-        drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 40)
+        drawText('Score: %s' % (score), font, windowSurface, 10, 0, RED)
+        drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 40,RED)
+        drawText('#Coins:',font,windowSurface,10,80,YELLOW)
         # *after* drawing everything, flip the display
         pygame.display.flip()
 
