@@ -153,6 +153,7 @@ drawText('Press a key to start.', font, windowSurface, (WINDOWWIDTH / 3) - 30, (
 pygame.display.update()
 waitForPlayerToPressKey()
 
+coins_number = 0
 topScore = 0
 
 #Création des groups
@@ -196,7 +197,7 @@ while True:
         all_sprites.update()
 
         # collision bullet-mob
-        hits_bullet = pygame.sprite.groupcollide(mobs,bullets,True,True)            #True,True ça kill le mob ET la bullet
+        hits_bullet = pygame.sprite.groupcollide(mobs,bullets,True,True)            #True,True ça kill le mob ET la bullet, cette fonction retourne une liste
         for hit in hits_bullet :        #on recrée un mob à chaque fois qu'on en kill un
             m = Mob()
             all_sprites.add(m)
@@ -207,13 +208,20 @@ while True:
             lives -= 1
             if lives <= 0:
                 running = False
+        # collision player-coin
+        hits_coin = pygame.sprite.spritecollide(player,coins,True,pygame.sprite.collide_mask)
+        for hit in hits_coin:
+            c = Coin()
+            all_sprites.add(c)
+            coins.add(c)
+            coins_number +=1                # si on arrive à genre 10 coins, on a accès au gun ?
 
         # Draw / render
         windowSurface.fill(BACKGROUNDCOLOR)
         all_sprites.draw(windowSurface)
         drawText('Score: %s' % (score), font, windowSurface, 10, 0, RED)
         drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 40,RED)
-        drawText('#Coins:',font,windowSurface,10,80,YELLOW)
+        drawText('#Coins: %s' % (coins_number),font,windowSurface,10,80,YELLOW)
         # *after* drawing everything, flip the display
         pygame.display.flip()
 
