@@ -11,7 +11,7 @@ BADDIEMINSIZE = 70
 BADDIEMAXSIZE = 140
 BADDIEMINSPEED = 1
 BADDIEMAXSPEED = 8
-ADDNEWBADDIERATE = 75
+ADDNEWBADDIERATE = 20
 ADDNEWARBRERATE = 100
 PLAYERMOVERATE = 5
 Player_Health = 10
@@ -41,9 +41,28 @@ def playerHasHitArbre(playerRect,arbres):
     for a in arbres:
         if playerRect.colliderect(a['rect']):
             Player_Health -=1
-            if pygame.sprite.collide_rect_ratio(.75)(playerRect, a['rect']):            #TODO masks !!!!
+            #if pygame.sprite.collide_mask(a['mask'],playerMask):
+                     #TODO masks !!!!
                 return True
     return False
+
+
+class Mob(pygame.sprite.Sprite):
+    def __init__(self, image, MinSize, MaxSize, MinSpeed, MaxSpeed):
+        pygame.sprite.Sprite.__init__(self)
+        self.imageSize = random.randint(MinSize, MaxSize)
+        self.image = pygame.transform.scale(image, (self.imageSize, self.imageSize))
+        self.rect = self.image.get_rect()
+
+        self.rect.x = random.randrange(WINDOWWIDTH+ self.imageSize,WINDOWWIDTH+ self.imageSize)
+        self.rect.y = random.randrange(0,WINDOWHEIGHT/2-self.imageSize)
+        self.speedx = random.randrange(-MinSpeed,-MaxSpeed)
+
+    def update(self):
+        self.rect.x = self.speedx
+
+
+
 
 def drawText(text, font, surface, x, y):
     textobj = font.render(text, 1, TEXTCOLOR)
@@ -73,16 +92,10 @@ heli1_required_height = 150
 playerImage = pygame.transform.scale(heli1Image, (heli1_required_height, round(heli1_required_height*heli1_height/heli1_width))).convert()
 playerRect = playerImage.get_rect()
 playerMask = pygame.mask.from_surface(playerImage)
-player_sprite1 = pygame.sprite.Sprite()
-player_sprite1.image = playerImage
-player_sprite1.rect = playerRect
-player_sprite1.mask = playerMask
 
-baddieImage = pygame.image.load('plane_image.png')#.convert() #TODO regarder la taille pour garder les proportions
+baddieImage = pygame.image.load('plane_image.png').convert() #TODO regarder la taille pour garder les proportions
 ArbreImage = pygame.image.load("Arbre.png").convert()
 ArbreImage_height =  ArbreImage.get_height()
-Arbre_sprite = pygame.sprite.Sprite()
-#Arbre_sprite.rect =  Arbre
 
 
 # Show the "Start" screen.
@@ -102,12 +115,10 @@ ARBREMAXSIZE_height = WINDOWHEIGHT/2 - ground_height
 
 
 class Background(pygame.sprite.Sprite):
-    def __init__(self, number, *args):
+    def __init__(self, number):
         self.image = pygame.image.load('Sol.png').convert()
         self.rect = self.image.get_rect()
         self.rect.topleft = (0,WINDOWHEIGHT-ground_height)
-        self._layer = -10
-        pygame.sprite.Sprite.__init__(self, *args)
         self.moved = 0
         self.number = number
         self.rect.x = self.rect.width * self.number
@@ -119,10 +130,12 @@ class Background(pygame.sprite.Sprite):
         if self.moved >= self.rect.width:
             self.rect.x = self.rect.width * self.number
             self.moved = 0
+
 group = pygame.sprite.LayeredUpdates()
-Background(0, group)
+#Background(0, group)
 Background(1, group)
-Background(2, group)                ##Tout ça, les ckground(012,group) c'est pour faire défiler le sol #TODO peut-être changer façon de faire
+#Background(2, group)         ##Tout ça, les ckground(012,group) c'est pour faire défiler le sol #TODO peut-être changer façon de faire
+
 
 while True:
     # Set up the start of the game.
@@ -197,6 +210,7 @@ while True:
                         }
 
             baddies.append(newBaddie)
+
         #Add new arbres, if needed :
         if arbreAddCounter == ADDNEWARBRERATE:
             arbreAddCounter = 0
@@ -206,9 +220,10 @@ while True:
                         'speed': -1,
                         'surface': pygame.transform.scale(ArbreImage,(round(arbreSize_width),round(arbreSize_height))),
                         'mask': pygame.mask.from_surface(pygame.transform.scale(ArbreImage,(round(arbreSize_width),round(arbreSize_height)))),
-                        }#?mask : pygame(newArbre['surface'])
+                        }
 
             arbres.append(newArbre)
+
         # Move the player around.
         if moveLeft and playerRect.left > 0:
             playerRect.move_ip(-1 * PLAYERMOVERATE, 0)
