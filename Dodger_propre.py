@@ -1,6 +1,8 @@
 import pygame, sys, random
+from pygame.locals import *
 
 BACKGROUNDCOLOR = (106, 201, 223)
+TEXTCOLOR = (255, 0, 0)
 BLACK = (0, 0, 0)
 WINDOWWIDTH = 900
 WINDOWHEIGHT = 600
@@ -13,6 +15,22 @@ lives = 3
 def terminate():
     pygame.quit()
     sys.exit()
+
+def drawText(text, font, surface, x, y):
+    textobj = font.render(text, 1, TEXTCOLOR)
+    textrect = textobj.get_rect()
+    textrect.topleft = (x, y)
+    surface.blit(textobj, textrect)
+
+def waitForPlayerToPressKey():
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                terminate()
+            if event.type == KEYDOWN :
+                if event.key == K_ESCAPE: # Pressing ESC quits.
+                    terminate()
+                return
 
 
 class Player(pygame.sprite.Sprite):
@@ -92,11 +110,26 @@ class Bullet(pygame.sprite.Sprite):
             self.kill()
 
 
-# initialize pygame and create window
+# initialize pygame and create window + police d'écriture (fonts)
 pygame.init()
 mainClock = pygame.time.Clock()
 windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 pygame.display.set_caption(("MY GAME"))
+pygame.mouse.set_visible(False)
+font = pygame.font.SysFont(None, 48)
+#Sons
+gameOverSound = pygame.mixer.Sound('roblox.wav')
+pygame.mixer.music.load('Fortunate Son.wav')
+pygame.mixer.music.set_volume(0.08)
+
+# Show the "Start" screen.
+windowSurface.fill(BACKGROUNDCOLOR)
+drawText('Dodger', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3))
+drawText('Press a key to start.', font, windowSurface, (WINDOWWIDTH / 3) - 30, (WINDOWHEIGHT / 3) + 50)
+pygame.display.update()
+waitForPlayerToPressKey()
+
+topScore = 0
 
 all_sprites = pygame.sprite.Group()
 mobs = pygame.sprite.Group()
@@ -110,31 +143,55 @@ for i in range(10):  # Nombre de mobs visibles à l'écran en même temps
 
 # Game loop
 running = True
-while running:
-    # Clock FPS
-    mainClock.tick(FPS)
-    # Process input (event)
-    for event in pygame.event.get():
-        # check for closing window
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                player.shoot()
+while True:
+    score = 0
+    pygame.mixer.music.play(-1, 0.0)
 
-    # Update
-    all_sprites.update()
+    while running:
+        score += 1
+        pygame.mixer.music.play(-1, 0.0)
+        # Clock FPS
+        mainClock.tick(FPS)
+        # Process input (event)
+        for event in pygame.event.get():
+            # check for closing window
+            if event.type == pygame.QUIT:
+                running = False
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    player.shoot()
 
-    # collision ?
-    hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_mask)
-    if hits:
-        lives -= 1
-        if lives <= 0:
-            running = False
-    # Draw / render
-    windowSurface.fill(BACKGROUNDCOLOR)
-    all_sprites.draw(windowSurface)
-    # *after* drawing everything, flip the display
-    pygame.display.flip()
+        # Update
+        all_sprites.update()
 
-pygame.quit()
+        # collision bullet-mob
+        hits_bullet = pygame.sprite.groupcollide(mobs,bullets,True,True)
+        for hit in hits_bullet :        #on recrée un mob à chaque fois qu'on en kill un
+            m = Mob()
+            all_sprites.add(m)
+            mobs.add(m)
+        # collision player-mob
+        hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_mask)
+        if hits:
+            lives -= 1
+            if lives <= 0:
+                running = False
+        # Draw / render
+        windowSurface.fill(BACKGROUNDCOLOR)
+        all_sprites.draw(windowSurface)
+        drawText('Score: %s' % (score), font, windowSurface, 10, 0)
+        drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 40)
+        # *after* drawing everything, flip the display
+        pygame.display.flip()
+
+    #Écran de game-over
+    pygame.mixer.music.stop()
+    gameOverSound.play()
+
+    drawText('GAME OVER', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3))
+    drawText('Press a key to play again.', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 50)
+    pygame.display.update()
+    waitForPlayerToPressKey()
+    gameOverSound.stop()
+
+#pygame.quit()
