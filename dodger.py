@@ -11,7 +11,7 @@ BADDIEMINSIZE = 70
 BADDIEMAXSIZE = 140
 BADDIEMINSPEED = 1
 BADDIEMAXSPEED = 8
-ADDNEWBADDIERATE = 20
+ADDNEWBADDIERATE = 75
 ADDNEWARBRERATE = 100
 PLAYERMOVERATE = 5
 
@@ -33,14 +33,13 @@ def waitForPlayerToPressKey():
 def playerHasHitBaddie(playerRect, baddies):
     for b in baddies:
         if playerRect.colliderect(b['rect']):
-            return True
+                return True
     return False
 
 def playerHasHitArbre(playerRect,arbres):
     for a in arbres:
         if playerRect.colliderect(a['rect']):
-            if pygame.sprite.collide_mask(a['mask'],playerMask):
-                     #TODO masks !!!!
+            if pygame.sprite.collide_rect_ratio(.75)(playerRect, a['rect']):            #TODO masks !!!!
                 return True
     return False
 
@@ -72,10 +71,16 @@ heli1_required_height = 150
 playerImage = pygame.transform.scale(heli1Image, (heli1_required_height, round(heli1_required_height*heli1_height/heli1_width))).convert()
 playerRect = playerImage.get_rect()
 playerMask = pygame.mask.from_surface(playerImage)
+player_sprite1 = pygame.sprite.Sprite()
+player_sprite1.image = playerImage
+player_sprite1.rect = playerRect
+player_sprite1.mask = playerMask
 
-baddieImage = pygame.image.load('plane_image.png') #TODO regarder la taille pour garder les proportions
+baddieImage = pygame.image.load('plane_image.png')#.convert() #TODO regarder la taille pour garder les proportions
 ArbreImage = pygame.image.load("Arbre.png").convert()
 ArbreImage_height =  ArbreImage.get_height()
+Arbre_sprite = pygame.sprite.Sprite()
+#Arbre_sprite.rect =  Arbre
 
 
 # Show the "Start" screen.
@@ -199,7 +204,7 @@ while True:
                         'speed': -1,
                         'surface': pygame.transform.scale(ArbreImage,(round(arbreSize_width),round(arbreSize_height))),
                         'mask': pygame.mask.from_surface(pygame.transform.scale(ArbreImage,(round(arbreSize_width),round(arbreSize_height)))),
-                        }
+                        }#?mask : pygame(newArbre['surface'])
 
             arbres.append(newArbre)
         # Move the player around.
