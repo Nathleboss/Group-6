@@ -14,7 +14,7 @@ BADDIEMAXSPEED = 8
 ADDNEWBADDIERATE = 75
 ADDNEWARBRERATE = 100
 PLAYERMOVERATE = 5
-
+Player_Health = 3
 
 def terminate():
     pygame.quit()
@@ -33,12 +33,14 @@ def waitForPlayerToPressKey():
 def playerHasHitBaddie(playerRect, baddies):
     for b in baddies:
         if playerRect.colliderect(b['rect']):
-                return True
+            Player_Health -=1
+            return True
     return False
 
 def playerHasHitArbre(playerRect,arbres):
     for a in arbres:
         if playerRect.colliderect(a['rect']):
+            Player_Health -=1
             if pygame.sprite.collide_rect_ratio(.75)(playerRect, a['rect']):            #TODO masks !!!!
                 return True
     return False
@@ -269,9 +271,10 @@ while True:
 
         # Check if any of the baddies have hit the player.
         if playerHasHitBaddie(playerRect, baddies) or playerRect.bottom > WINDOWHEIGHT - ground_height or playerHasHitArbre(playerRect, arbres):
-            if score > topScore:
-                topScore = score # set new top score
-            break
+            if Player_Health ==0:
+                if score > topScore:
+                    topScore = score # set new top score
+                break
 
         mainClock.tick(FPS)
 
