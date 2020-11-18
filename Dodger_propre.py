@@ -66,7 +66,7 @@ class Player(pygame.sprite.Sprite):
 
 
     def shoot(self):
-        bullet = Bullet(self.rect.centerx, self.rect.bottom)
+        bullet = Bullet(self.rect.centerx +60, self.rect.bottom -5)
         all_sprites.add(bullet)
         bullets.add(bullet)
 
@@ -160,7 +160,8 @@ while True:
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     player.shoot()
-
+                if event.key == pygame.K_ESCAPE:
+                    running = False ; pygame.quit()
         # Update
         all_sprites.update()
 
