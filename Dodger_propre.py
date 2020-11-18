@@ -149,7 +149,6 @@ while True:
 
     while running:
         score += 1
-        pygame.mixer.music.play(-1, 0.0)
         # Clock FPS
         mainClock.tick(FPS)
         # Process input (event)
