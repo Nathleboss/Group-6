@@ -32,6 +32,10 @@ def waitForPlayerToPressKey():
                     terminate()
                 return
 
+def reset_groups():
+    all_sprites.empty();
+    mobs.empty();
+    bullets.empty()
 
 class Player(pygame.sprite.Sprite):
     # sprite for the Player
@@ -109,6 +113,10 @@ class Bullet(pygame.sprite.Sprite):
         if self.rect.right > WINDOWWIDTH:
             self.kill()
 
+class Coin(pygame.sprite.Sprite):               #pourquoi pas faire une superclass qui contient les pièces et les bonus ?
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image =            #mettre une animation avec plusieurs modèles de coins qui tourne comme hélico
 
 # initialize pygame and create window + police d'écriture (fonts)
 pygame.init()
@@ -131,12 +139,13 @@ waitForPlayerToPressKey()
 
 topScore = 0
 
+#Création des groups
 all_sprites = pygame.sprite.Group()
 mobs = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
-for i in range(10):  # Nombre de mobs visibles à l'écran en même temps
+for i in range(6):  # Nombre de mobs visibles à l'écran en même temps
     m = Mob()
     all_sprites.add(m)
     mobs.add(m)
@@ -160,12 +169,13 @@ while True:
                 if event.key == pygame.K_SPACE:
                     player.shoot()
                 if event.key == pygame.K_ESCAPE:
-                    running = False ; pygame.quit()
+                    terminate()                     #running = False ; pygame.quit()
+
         # Update
         all_sprites.update()
 
         # collision bullet-mob
-        hits_bullet = pygame.sprite.groupcollide(mobs,bullets,True,True)
+        hits_bullet = pygame.sprite.groupcollide(mobs,bullets,True,True)            #True,True ça kill le mob ET la bullet
         for hit in hits_bullet :        #on recrée un mob à chaque fois qu'on en kill un
             m = Mob()
             all_sprites.add(m)
@@ -176,6 +186,7 @@ while True:
             lives -= 1
             if lives <= 0:
                 running = False
+
         # Draw / render
         windowSurface.fill(BACKGROUNDCOLOR)
         all_sprites.draw(windowSurface)
@@ -191,6 +202,7 @@ while True:
     drawText('GAME OVER', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3))
     drawText('Press a key to play again.', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 50)
     pygame.display.update()
+    reset_groups()
     waitForPlayerToPressKey()
     gameOverSound.stop()
 
