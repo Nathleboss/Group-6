@@ -14,7 +14,7 @@ BADDIEMAXSPEED = 8
 ADDNEWBADDIERATE = 75
 ADDNEWARBRERATE = 100
 PLAYERMOVERATE = 5
-Player_Health = 3
+Player_Health = 10
 
 def terminate():
     pygame.quit()
