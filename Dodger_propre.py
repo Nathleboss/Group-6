@@ -118,22 +118,28 @@ class Coin(pygame.sprite.Sprite):               #pourquoi pas faire une supercla
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("Coin.png")      #mettre une animation avec plusieurs modèles de coins qui tourne comme hélico
-        self.image = pygame.transform.scale(self.image,(50,50))
+        self.image = pygame.transform.scale(self.image,(40,40))
         self.rect = self.image.get_rect()
         self.rect.x = WINDOWWIDTH
         self.rect.y = random.randrange(0,WINDOWHEIGHT-100)
-        self.speedx = 3
+        self.speedx = -3
         self.speedy = random.randrange(-3,3)
         self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
+        #déplacement "sinusoïdale":
+        if self.rect.bottom > WINDOWHEIGHT -100 :
+            self.speedy=  -3
+        if self.rect.top < 100 :
+            self.speedy = 3
         if self.rect.left < -self.rect.width or abs(self.rect.top) > WINDOWHEIGHT :       #si la pièce sort sur la gauche ou en haut/bas
             self.rect.x = WINDOWWIDTH
             self.rect.y = random.randrange(0, WINDOWHEIGHT - 100)
-            self.speedx = 3
+            self.speedx = -3
             self.speedy = random.randrange(-3, 3)
+
 # initialize pygame and create window + police d'écriture (fonts)
 pygame.init()
 mainClock = pygame.time.Clock()
@@ -167,7 +173,7 @@ for i in range(6):  # Nombre de mobs visibles à l'écran en même temps
     m = Mob()
     all_sprites.add(m)
     mobs.add(m)
-for i in range(2):   #Pareil pour les coins
+for i in range(1):   #Pareil pour les coins
     c = Coin()
     all_sprites.add(c)
     coins.add(c)
