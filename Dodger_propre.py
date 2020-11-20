@@ -40,8 +40,8 @@ def waitForPlayerToPressKey():
 def reset_groups():
     all_sprites.empty();
     mobs.empty();
-    bullets.empty()
-
+    bullets.empty();
+    trees.empty();
 class Player(pygame.sprite.Sprite):
     # sprite for the Player
     def __init__(self):
@@ -64,7 +64,7 @@ class Player(pygame.sprite.Sprite):
             self.speedx = 5
         if keystate[pygame.K_UP]:
             self.speedy = -5
-        if keystate[pygame.K_DOWN]:
+        if keystate[pygame.K_DOWN]:                 #si on meurt à cause d'autre chose que le sol et qu'on presse K_DOWN, en ayant pas réussi à relancer le jeu après une mort, ça fait bugguer
             self.speedy = 5
         self.rect.x += self.speedx
         self.rect.y += self.speedy
@@ -200,6 +200,7 @@ pygame.mouse.set_visible(False)
 font = pygame.font.SysFont(None, 48)
 #Sons
 gameOverSound = pygame.mixer.Sound('roblox.wav')
+coinSound = pygame.mixer.Sound('smw_coin.wav')
 pygame.mixer.music.load('Fortunate Son.wav')
 pygame.mixer.music.set_volume(0.08)
 
@@ -248,6 +249,7 @@ for i in range(1):   #Pareil pour les coins
 running = True
 while True:
     score = 0
+    coins_number = 0
     pygame.mixer.music.play(-1, 0.0)
 
     arbreAddCounter = 0
@@ -260,7 +262,7 @@ while True:
         for event in pygame.event.get():
             # check for closing window
             if event.type == pygame.QUIT:
-                running = False
+                terminate()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     player.shoot()
@@ -289,6 +291,9 @@ while True:
         hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_mask)
         # collisions player-coin + counter coins
         hits_coin = pygame.sprite.spritecollide(player,coins,True,pygame.sprite.collide_mask)
+        if hits_coin :
+            coinSound.play()
+            score += 100                    #est-ce que choper une coin ça donne +100 score ?
         for hit in hits_coin:
             c = Coin()
             all_sprites.add(c)
@@ -300,7 +305,7 @@ while True:
         if hits or hits_tree or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
             lives -= 1
             if lives <= 0:
-                running = False
+                break
         # Draw / render
         windowSurface.fill(BACKGROUNDCOLOR)
         all_sprites.draw(windowSurface)
