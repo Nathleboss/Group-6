@@ -96,7 +96,7 @@ class Player(pygame.sprite.Sprite):
         bullet = Bullet(self.rect.centerx +60, self.rect.bottom -5)
         all_sprites.add(bullet)
         bullets.add(bullet)
-
+        pygame.mixer.Sound('Blaster.wav').play()
 
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
