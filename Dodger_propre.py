@@ -12,6 +12,8 @@ PLAYERMOVERATE = 5
 
 lives = 3
 
+ADDNEWARBRERATE = 200
+
 # TODO A faire autrement !!
 hauteur_sol = pygame.image.load("Sol.png").get_height()
 
@@ -248,6 +250,8 @@ while True:
     score = 0
     pygame.mixer.music.play(-1, 0.0)
 
+    arbreAddCounter = 0
+
     while running:
         score += 1
         # Clock FPS
@@ -264,8 +268,10 @@ while True:
                     terminate()       #running = False ; pygame.quit()
 
         # technique foireuse pour faire apparaître random des arbres (à la place de for in range plus haut)
-        a = random.randint(0, 200)
-        if a in range(28, 30):
+        arbreAddCounter += 1
+
+        if arbreAddCounter == ADDNEWARBRERATE:
+            arbreAddCounter = 0
             t = Tree()
             all_sprites.add(t)
             trees.add(t)
