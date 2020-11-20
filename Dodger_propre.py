@@ -54,7 +54,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2)
         self.speed = 0
         self.mask = pygame.mask.from_surface(self.image)
-
+        self.lives = 3
     def load_images(self):              #pour créer animation des hélices de l'hélicoptère
         self.frame0 = pygame.image.load("heli-1.png")
         self.frame1 = pygame.image.load("heli-2.png")
@@ -320,8 +320,8 @@ while True:
         hits_tree = pygame.sprite.spritecollide(player,trees,False, pygame.sprite.collide_mask)
         #if collision, then lose a lifepoint
         if hits or hits_tree or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
-            lives -= 1
-            if lives <= 0:
+            player.lives -= 1
+            if player.lives <= 0:
                 break
         # Draw / render
         windowSurface.fill(BACKGROUNDCOLOR)
