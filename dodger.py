@@ -33,18 +33,18 @@ def waitForPlayerToPressKey():
 def playerHasHitBaddie(playerRect, baddies):
     for b in baddies:
         if playerRect.colliderect(b['rect']):
-            Player_Health -=1
+            #Player_Health -=1
             return True
     return False
 
 def playerHasHitArbre(playerRect,arbres):
     for a in arbres:
         if playerRect.colliderect(a['rect']):
-            Player_Health -=1
+           # Player_Health -=1
             #if pygame.sprite.collide_mask(a['mask'],playerMask):
                      #TODO masks !!!!
-                return True
-    return False
+            return True
+        return False
 
 
 class Mob(pygame.sprite.Sprite):
@@ -109,33 +109,36 @@ topScore = 0
 
 #importation du sol qui défile
 ground = pygame.image.load("Sol.png").convert()
-ground_width, ground_height = ground.get_width(),ground.get_height()
+_width, ground_height = ground.get_width(),ground.get_height()
 ARBREMINSIZE_height = 60
 ARBREMAXSIZE_height = WINDOWHEIGHT/2 - ground_height
 
-
-class Background(pygame.sprite.Sprite):
-    def __init__(self, number):
-        self.image = pygame.image.load('Sol.png').convert()
+"""
+class Ground(pygame.sprite.Sprite):
+    def __init__(self,position):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("Sol.png")
         self.rect = self.image.get_rect()
-        self.rect.topleft = (0,WINDOWHEIGHT-ground_height)
-        self.moved = 0
-        self.number = number
-        self.rect.x = self.rect.width * self.number
+        self.position = position
+        self.rect.x = self.rect.width * self.position
+        self.rect.y = WINDOWHEIGHT - self.rect.height
+        self.speedx = -1
+
 
     def update(self):
-        self.rect.move_ip(-1, 0)
-        self.moved += 1
+        self.rect.x += self.speedx
 
-        if self.moved >= self.rect.width:
-            self.rect.x = self.rect.width * self.number
-            self.moved = 0
+        if self.rect.left <= -self.rect.width:
+            self.rect.x = WINDOWWIDTH
+            self.rect.y = WINDOWHEIGHT - self.rect.height
+            self.speedx = -1
 
-group = pygame.sprite.LayeredUpdates()
-#Background(0, group)
-Background(1, group)
-#Background(2, group)         ##Tout ça, les ckground(012,group) c'est pour faire défiler le sol #TODO peut-être changer façon de faire
 
+ground = pygame.sprite.Group()
+all_sprites.add(Ground(0))
+all_sprites.add(Ground(1))
+all_sprites.add(Ground(2))        ##Tout ça, les ckground(012,group) c'est pour faire défiler le sol #TODO peut-être changer façon de faire
+"""
 
 while True:
     # Set up the start of the game.
@@ -258,8 +261,8 @@ while True:
 
         # Draw the game world on the window.
         windowSurface.fill(BACKGROUNDCOLOR)
-        group.update()
-        group.draw(windowSurface)
+        #group.update()
+        #group.draw(windowSurface)
         #windowSurface.blit(ArbreImage,(450,WINDOWHEIGHT-Arbre_height -ground_height))
         #pygame.display.flip()
         ### image du sol

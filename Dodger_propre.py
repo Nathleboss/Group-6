@@ -12,6 +12,8 @@ PLAYERMOVERATE = 5
 
 lives = 3
 
+# TODO A faire autrement !!
+hauteur_sol = pygame.image.load("Sol.png").get_height()
 
 def terminate():
     pygame.quit()
@@ -68,7 +70,8 @@ class Player(pygame.sprite.Sprite):
             self.rect.right = WINDOWWIDTH
         if self.rect.x < 0:
             self.rect.left = 0
-
+        if self.rect.top <= 0:
+            self.rect.top = 0
 
     def shoot(self):
         bullet = Bullet(self.rect.centerx +60, self.rect.bottom -5)
@@ -140,6 +143,52 @@ class Coin(pygame.sprite.Sprite):               #pourquoi pas faire une supercla
             self.speedx = -3
             self.speedy = random.randrange(-3, 3)
 
+class Tree(pygame.sprite.Sprite):
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("Arbre.png")
+        self.imageSize = random.randint(60, WINDOWHEIGHT/2 - hauteur_sol)
+        self.image = pygame.transform.scale(self.image, (self.imageSize, self.imageSize))
+        self.rect = self.image.get_rect()
+        self.rect.x = WINDOWWIDTH+round(self.rect.width)
+        self.rect.y = WINDOWHEIGHT-self.rect.height- hauteur_sol
+        self.speedx = -1
+        self.mask = pygame.mask.from_surface(self.image)
+
+    def update(self):
+        self.rect.x += self.speedx
+        if self.rect.left < -self.rect.width:  # si l'ennemi dépasse la fenêtre à gauche, on le remet à un endroit random à droite
+            self.imageSize = random.randint(60, WINDOWHEIGHT / 2 - hauteur_sol)
+            self.image = pygame.transform.scale(self.image, (self.imageSize, self.imageSize))
+            self.rect = self.image.get_rect()
+            self.rect.x = WINDOWWIDTH + round(self.rect.width)
+            self.rect.y = WINDOWHEIGHT - self.rect.height - hauteur_sol
+            self.speedx = -1
+
+class Ground(pygame.sprite.Sprite):
+    def __init__(self,position):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.image.load("Sol.png")
+        self.rect = self.image.get_rect()
+        self.position = position
+        self.rect.x = self.rect.width * self.position
+        self.rect.y = WINDOWHEIGHT - self.rect.height
+        self.speedx = -1
+        self.height = self.rect.height
+
+
+    def update(self):
+        self.rect.x += self.speedx
+
+        if self.rect.left <= -self.rect.width:
+            self.rect.x = WINDOWWIDTH
+            self.rect.y = WINDOWHEIGHT - self.rect.height
+            self.speedx = -1
+
+
+
+
+
 # initialize pygame and create window + police d'écriture (fonts)
 pygame.init()
 mainClock = pygame.time.Clock()
@@ -167,8 +216,16 @@ all_sprites = pygame.sprite.Group()
 mobs = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 coins = pygame.sprite.Group()
+ground = pygame.sprite.Group()
+trees = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
+
+
+all_sprites.add(Ground(0))
+all_sprites.add(Ground(1))
+all_sprites.add(Ground(2))
+
 for i in range(6):  # Nombre de mobs visibles à l'écran en même temps
     m = Mob()
     all_sprites.add(m)
@@ -177,6 +234,13 @@ for i in range(1):   #Pareil pour les coins
     c = Coin()
     all_sprites.add(c)
     coins.add(c)
+
+
+
+#for i in range(10):  # Nombre de mobs visibles à l'écran en même temps
+ #   t = Tree()
+  #  all_sprites.add(t)
+  #  trees.add(t)
 
 # Game loop
 running = True
@@ -197,7 +261,14 @@ while True:
                 if event.key == pygame.K_SPACE:
                     player.shoot()
                 if event.key == pygame.K_ESCAPE:
-                    terminate()                     #running = False ; pygame.quit()
+                    terminate()       #running = False ; pygame.quit()
+
+        # technique foireuse pour faire apparaître random des arbres (à la place de for in range plus haut)
+        a = random.randint(0, 200)
+        if a in range(28, 30):
+            t = Tree()
+            all_sprites.add(t)
+            trees.add(t)
 
         # Update
         all_sprites.update()
@@ -235,8 +306,8 @@ while True:
     pygame.mixer.music.stop()
     gameOverSound.play()
 
-    drawText('GAME OVER', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3))
-    drawText('Press a key to play again.', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 50)
+    drawText('GAME OVER', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3), RED)
+    drawText('Press a key to play again.', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 50, RED)
     pygame.display.update()
     reset_groups()
     waitForPlayerToPressKey()
