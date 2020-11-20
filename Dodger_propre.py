@@ -46,15 +46,32 @@ class Player(pygame.sprite.Sprite):
     # sprite for the Player
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("heli-1.png")  # pygame.Surface((50,50))
-        # self.image.fill(BLACK)
+        self.current_frame = 0
+        self.last_update = 0
+        self.load_images()
+        self.image = self.frames[0]               #pygame.image.load("heli-1.png")
         self.rect = self.image.get_rect()
         self.rect.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2)
         self.speed = 0
         self.mask = pygame.mask.from_surface(self.image)
 
+    def load_images(self):              #pour créer animation des hélices de l'hélicoptère
+        self.frame0 = pygame.image.load("heli-1.png")
+        self.frame1 = pygame.image.load("heli-2.png")
+        self.frame2 = pygame.image.load("heli-3.png")
+        self.frame3 = pygame.image.load("heli-4.png")
+        self.frames = [self.frame0, self.frame1, self.frame2, self.frame3]
+
+    def animate(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > 50 :           #en millisecondes
+            self.last_update = now
+            self.current_frame = (self.current_frame+1) % len(self.frames)      #check vidéo pour bien capter
+            self.image = self.frames[self.current_frame]
+            self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
+        self.animate()
         self.speedx = 0
         self.speedy = 0
         keystate = pygame.key.get_pressed()
