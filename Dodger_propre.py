@@ -157,14 +157,14 @@ class Tree(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.speedx
-        if self.rect.left < -self.rect.width:  # si l'ennemi dépasse la fenêtre à gauche, on le remet à un endroit random à droite
-            self.imageSize = random.randint(60, WINDOWHEIGHT / 2 - hauteur_sol)
-            self.image = pygame.transform.scale(self.image, (self.imageSize, self.imageSize))
-            self.rect = self.image.get_rect()
-            self.rect.x = WINDOWWIDTH + round(self.rect.width)
-            self.rect.y = WINDOWHEIGHT - self.rect.height - hauteur_sol
-            self.speedx = -1
-
+        #if self.rect.left < -self.rect.width:  # si l'ennemi dépasse la fenêtre à gauche, on le remet à un endroit random à droite
+         #   self.imageSize = random.randint(60, WINDOWHEIGHT / 2 - hauteur_sol)
+          #  self.image = pygame.transform.scale(self.image, (self.imageSize, self.imageSize))
+           # self.rect = self.image.get_rect()
+            #self.rect.x = WINDOWWIDTH + round(self.rect.width)
+            #self.rect.y = WINDOWHEIGHT - self.rect.height - hauteur_sol
+            #self.speedx = -1
+        #########Pas besoin avec la façon aléatoire qu'on a, si on laisse ça crée de plus en plus d'arbres
 class Ground(pygame.sprite.Sprite):
     def __init__(self,position):
         pygame.sprite.Sprite.__init__(self)
@@ -279,20 +279,22 @@ while True:
             m = Mob()
             all_sprites.add(m)
             mobs.add(m)
-        # collision player-mob
+        # collisions player-mob
         hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_mask)
-        if hits:
-            lives -= 1
-            if lives <= 0:
-                running = False
-        # collision player-coin
+        # collisions player-coin + counter coins
         hits_coin = pygame.sprite.spritecollide(player,coins,True,pygame.sprite.collide_mask)
         for hit in hits_coin:
             c = Coin()
             all_sprites.add(c)
             coins.add(c)
             coins_number +=1                # si on arrive à genre 10 coins, on a accès au gun ?
-
+        #collisions player-tree
+        hits_tree = pygame.sprite.spritecollide(player,trees,False, pygame.sprite.collide_mask)
+        #if collision, then lose a lifepoint
+        if hits or hits_tree or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
+            lives -= 1
+            if lives <= 0:
+                running = False
         # Draw / render
         windowSurface.fill(BACKGROUNDCOLOR)
         all_sprites.draw(windowSurface)
