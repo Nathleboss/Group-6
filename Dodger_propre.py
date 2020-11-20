@@ -66,7 +66,7 @@ class Player(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         if now - self.last_update > 50 :           #en millisecondes
             self.last_update = now
-            self.current_frame = (self.current_frame+1) % len(self.frames)      #check vidéo pour bien capter
+            self.current_frame = (self.current_frame+1) % len(self.frames)      #1%4=1; 2%4=2; 3%4=3; 4%4=0, 5%4=1 etc...
             self.image = self.frames[self.current_frame]
             self.mask = pygame.mask.from_surface(self.image)
 
@@ -139,7 +139,7 @@ class Bullet(pygame.sprite.Sprite):
 class Coin(pygame.sprite.Sprite):               #pourquoi pas faire une superclass qui contient les pièces et les bonus ?
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("Coin.png")      #mettre une animation avec plusieurs modèles de coins qui tourne comme hélico
+        self.image = pygame.image.load("Coin.png")      #mettre une animation avec plusieurs modèles de coins qui tourne comme hélico ?
         self.image = pygame.transform.scale(self.image,(40,40))
         self.rect = self.image.get_rect()
         self.rect.x = WINDOWWIDTH
@@ -339,8 +339,8 @@ while True:
     drawText('GAME OVER', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3), RED)
     drawText('Press a key to play again.', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 50, RED)
     pygame.display.update()
-    reset_groups()
-    waitForPlayerToPressKey()
+    reset_groups()          #trouver un moyen de reset groups et d'en créer de nouveaux quand on relance une game, donc création doit être à l'intérieur de la gaming loop !
+    waitForPlayerToPressKey()       #si on met reset_groups en commentaire, on peut relancer la game directement de là où on est mort
     gameOverSound.stop()
 
 #pygame.quit()
