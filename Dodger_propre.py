@@ -110,7 +110,7 @@ class Player(pygame.sprite.Sprite):
         pygame.mixer.Sound('Blaster.wav').play()
 
 class Mob(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self,score):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("plane_image.png")
         self.imageSize = random.randint(100, 300)
@@ -121,6 +121,8 @@ class Mob(pygame.sprite.Sprite):
         # self.speedy = random.randrange(1,8)
         self.speedx = random.randrange(-5, -1)
         self.mask = pygame.mask.from_surface(self.image)
+        if score > 5000:
+
 
     def update(self):
         # self.rect.y += self.speedy
