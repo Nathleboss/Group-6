@@ -187,14 +187,7 @@ class Tree(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.speedx
-        #if self.rect.left < -self.rect.width:  # si l'ennemi dépasse la fenêtre à gauche, on le remet à un endroit random à droite
-         #   self.imageSize = random.randint(60, WINDOWHEIGHT / 2 - hauteur_sol)
-          #  self.image = pygame.transform.scale(self.image, (self.imageSize, self.imageSize))
-           # self.rect = self.image.get_rect()
-            #self.rect.x = WINDOWWIDTH + round(self.rect.width)
-            #self.rect.y = WINDOWHEIGHT - self.rect.height - hauteur_sol
-            #self.speedx = -1
-        #########Pas besoin avec la façon aléatoire qu'on a, si on laisse ça crée de plus en plus d'arbres
+
 class Ground(pygame.sprite.Sprite):
     def __init__(self,position):
         pygame.sprite.Sprite.__init__(self)
@@ -215,7 +208,9 @@ class Ground(pygame.sprite.Sprite):
             self.rect.y = WINDOWHEIGHT - self.rect.height
             self.speedx = -1
 
-
+    def get_height(self):
+        self.hauteur = self.rect.height
+        return self.hauteur
 
 
 
@@ -298,7 +293,6 @@ while True:
                 if event.key == pygame.K_ESCAPE:
                     terminate()       #running = False ; pygame.quit()
 
-        # technique foireuse pour faire apparaître random des arbres (à la place de for in range plus haut)
         arbreAddCounter += 1
 
         if arbreAddCounter == ADDNEWARBRERATE:
@@ -335,6 +329,8 @@ while True:
             player.lives -= 1
             if player.lives <= 0:
                 player = Player()           #permet de bien reset le player pour nouvelle game
+                if score > topScore:
+                    topScore = score
                 break
 
         # Draw / render
@@ -353,8 +349,8 @@ while True:
     drawText('GAME OVER', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3), RED)
     drawText('Press a key to play again', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 50, RED)
     pygame.display.update()
-    reset_groups()          #trouver un moyen de reset groups et d'en créer de nouveaux quand on relance une game, donc création doit être à l'intérieur de la gaming loop !
-    waitForPlayerToPressKey()       #si on met reset_groups en commentaire, on peut relancer la game directement de là où on est mort
+    reset_groups()
+    waitForPlayerToPressKey()
     gameOverSound.stop()
 
 #pygame.quit()
