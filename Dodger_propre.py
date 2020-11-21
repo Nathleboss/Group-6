@@ -10,11 +10,11 @@ WINDOWHEIGHT = 600
 FPS = 60
 PLAYERMOVERATE = 5
 
-lives = 3
+#lives = 3
 
 ADDNEWARBRERATE = 200
 
-# TODO A faire autrement !!
+# TODO A faire autrement !! on peut sûrement faire avec un colliderect, mais ça nous dit pas pourquoi ça marche pas avec ground.height
 hauteur_sol = pygame.image.load("Sol.png").get_height()
 
 def terminate():
@@ -38,10 +38,23 @@ def waitForPlayerToPressKey():
                 return
 
 def reset_groups():
-    all_sprites.empty();
-    mobs.empty();
-    bullets.empty();
-    trees.empty();
+    all_sprites.empty();mobs.empty();bullets.empty();trees.empty(); #player = None
+    player = Player()
+    all_sprites.add(player)
+    all_sprites.add(Ground(0))
+    all_sprites.add(Ground(1))
+    all_sprites.add(Ground(2))
+
+    for i in range(6):  # Nombre de mobs visibles à l'écran en même temps
+        m = Mob()
+        all_sprites.add(m)
+        mobs.add(m)
+    for i in range(1):  # Pareil pour les coins
+        c = Coin()
+        all_sprites.add(c)
+        coins.add(c)
+
+
 class Player(pygame.sprite.Sprite):
     # sprite for the Player
     def __init__(self):
@@ -87,7 +100,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.speedy
         if self.rect.right > WINDOWWIDTH:
             self.rect.right = WINDOWWIDTH
-        if self.rect.x < 0:
+        if self.rect.x < 0:         #ne pas sortir de l'écran
             self.rect.left = 0
         if self.rect.top <= 0:
             self.rect.top = 0
@@ -154,7 +167,7 @@ class Coin(pygame.sprite.Sprite):               #pourquoi pas faire une supercla
         #déplacement "sinusoïdale":
         if self.rect.bottom > WINDOWHEIGHT -100 :
             self.speedy=  -3
-        if self.rect.top < 100 :
+        if self.rect.top < 50 :
             self.speedy = 3
         if self.rect.left < -self.rect.width or abs(self.rect.top) > WINDOWHEIGHT :       #si la pièce sort sur la gauche ou en haut/bas
             self.rect.x = WINDOWWIDTH
@@ -299,7 +312,7 @@ while True:
         all_sprites.update()
 
         # collision bullet-mob
-        hits_bullet = pygame.sprite.groupcollide(mobs,bullets,True,True)            #True,True ça kill le mob ET la bullet, cette fonction retourne une liste
+        hits_bullet = pygame.sprite.groupcollide(mobs,bullets,True,True, pygame.sprite.collide_mask)            #True,True ça kill le mob ET la bullet, cette fonction retourne une liste
         for hit in hits_bullet :        #on recrée un mob à chaque fois qu'on en kill un
             m = Mob()
             all_sprites.add(m)
