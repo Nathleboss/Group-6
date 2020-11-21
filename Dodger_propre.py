@@ -122,7 +122,7 @@ class Mob(pygame.sprite.Sprite):
         self.speedx = random.randrange(-5, -1)
         self.mask = pygame.mask.from_surface(self.image)
         if score > 5000:
-
+            pass
 
     def update(self):
         # self.rect.y += self.speedy
