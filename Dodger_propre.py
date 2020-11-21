@@ -38,8 +38,7 @@ def waitForPlayerToPressKey():
                 return
 
 def reset_groups():
-    all_sprites.empty();mobs.empty();bullets.empty();trees.empty(); #player = None
-    player = Player()
+    all_sprites.empty();mobs.empty();bullets.empty();trees.empty();coins.empty()
     all_sprites.add(player)
     all_sprites.add(Ground(0))
     all_sprites.add(Ground(1))
@@ -56,7 +55,6 @@ def reset_groups():
 
 
 class Player(pygame.sprite.Sprite):
-    # sprite for the Player
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.current_frame = 0
@@ -68,7 +66,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 0
         self.mask = pygame.mask.from_surface(self.image)
         self.lives = 3
-    def load_images(self):              #pour créer animation des hélices de l'hélicoptère
+    def load_images(self):              #load_images() et animate() pour créer animation des hélices de l'hélicoptère
         self.frame0 = pygame.image.load("heli-1.png")
         self.frame1 = pygame.image.load("heli-2.png")
         self.frame2 = pygame.image.load("heli-3.png")
@@ -281,7 +279,7 @@ while True:
     score = 0
     coins_number = 0
     pygame.mixer.music.play(-1, 0.0)
-
+    reset_groups()
     arbreAddCounter = 0
 
     while running:
@@ -328,14 +326,16 @@ while True:
             c = Coin()
             all_sprites.add(c)
             coins.add(c)
-            coins_number +=1                # si on arrive à genre 10 coins, on a accès au gun ?
+            coins_number += 1                # si on arrive à genre 10 coins, on a accès au gun ?
         #collisions player-tree
         hits_tree = pygame.sprite.spritecollide(player,trees,False, pygame.sprite.collide_mask)
-        #if collision, then lose a lifepoint
+        #if bad collision for player, then lose a lifepoint
         if hits or hits_tree or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
             player.lives -= 1
             if player.lives <= 0:
+                player = Player()           #permet de bien reset le player pour nouvelle game
                 break
+
         # Draw / render
         windowSurface.fill(BACKGROUNDCOLOR)
         all_sprites.draw(windowSurface)
@@ -350,7 +350,7 @@ while True:
     gameOverSound.play()
 
     drawText('GAME OVER', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3), RED)
-    drawText('Press a key to play again.', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 50, RED)
+    drawText('Press a key to play again', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 50, RED)
     pygame.display.update()
     reset_groups()          #trouver un moyen de reset groups et d'en créer de nouveaux quand on relance une game, donc création doit être à l'intérieur de la gaming loop !
     waitForPlayerToPressKey()       #si on met reset_groups en commentaire, on peut relancer la game directement de là où on est mort
