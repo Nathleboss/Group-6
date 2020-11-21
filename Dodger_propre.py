@@ -252,7 +252,7 @@ trees = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
 
-
+"""
 all_sprites.add(Ground(0))
 all_sprites.add(Ground(1))
 all_sprites.add(Ground(2))
@@ -272,7 +272,8 @@ for i in range(1):   #Pareil pour les coins
  #   t = Tree()
   #  all_sprites.add(t)
   #  trees.add(t)
-
+"""
+                        ###pas besoin de la partie en commentaire vert, présent dans la fonction reset_groups()
 # Game loop
 running = True
 while True:
