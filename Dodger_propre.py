@@ -1,13 +1,15 @@
 import pygame, sys, random
 from pygame.locals import *
 
+# PUSH pour Nathan
+
 BACKGROUNDCOLOR = (106, 201, 223)
 RED = (255, 0, 0)
 YELLOW = (255,255,0)
 BLACK = (0, 0, 0)
 WINDOWWIDTH = 900
 WINDOWHEIGHT = 600
-FPS = 60
+FPS = 100
 PLAYERMOVERATE = 5
 
 #lives = 3
@@ -45,7 +47,7 @@ def reset_groups():
     all_sprites.add(Ground(2))
 
     for i in range(6):  # Nombre de mobs visibles à l'écran en même temps
-        m = Mob(score)
+        m = Mob()
         all_sprites.add(m)
         mobs.add(m)
     for i in range(1):  # Pareil pour les coins
@@ -110,7 +112,7 @@ class Player(pygame.sprite.Sprite):
         pygame.mixer.Sound('Blaster.wav').play()
 
 class Mob(pygame.sprite.Sprite):
-    def __init__(self, score):
+    def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("plane_image.png")
         self.imageSize = random.randint(100, 300)
@@ -121,42 +123,13 @@ class Mob(pygame.sprite.Sprite):
         # self.speedy = random.randrange(1,8)
         self.speedx = random.randrange(-5, -1)
         self.mask = pygame.mask.from_surface(self.image)
-        self.bossfight = False
-        if score > 1000:
-            self.image = pygame.image.load("Boss.png")
-            self.mask = pygame.mask.from_surface(self.image)
-            self.rect = self.image.get_rect()
-            self.speedx = 0
-            if self.rect.top <=0:
-                self.speedy = 5
-            if self.rect.bottom >= WINDOWHEIGHT/2:
-                self.speedy = -5
-    def Boss(self,score):
-        if score > 500:
-            self.bossfight = True
-            self.image = pygame.image.load("Boss.png")
-            self.image = pygame.transform.scale(self.image, (350, 131))
-            self.mask = pygame.mask.from_surface(self.image)
-            self.rect = self.image.get_rect()
-            self.rect.center = (WINDOWWIDTH - self.rect.width / 2, WINDOWHEIGHT / 2)
-            self.speedx = 0
+        #if score > 5000:
+            #pass
+
     def update(self):
-        #self.rect.y += self.speedy
-       """" if score > 500:         #Boss, mais ça fait laguer car mauvaise façon de le faire
-            self.image = pygame.image.load("Boss.png")
-            self.image = pygame.transform.scale(self.image,(350,131))
-            self.mask = pygame.mask.from_surface(self.image)
-            self.rect = self.image.get_rect()
-            self.rect.center = (WINDOWWIDTH - self.rect.width/2, WINDOWHEIGHT/2)
-            self.speedx = 0
-            if self.rect.top <=0:
-                self.speedy = 5
-            if self.rect.bottom >= WINDOWHEIGHT/2:
-                self.speedy = -5
-            self.rect.top += self.speedy
-        else :"""
-       self.rect.x += self.speedx
-       if self.rect.left < -self.rect.width:  # si l'ennemi dépasse la fenêtre à gauche, on le remet à un endroit random à droite
+        # self.rect.y += self.speedy
+        self.rect.x += self.speedx
+        if self.rect.left < -self.rect.width:  # si l'ennemi dépasse la fenêtre à gauche, on le remet à un endroit random à droite
             self.rect.x = WINDOWWIDTH
             self.rect.y = random.randrange(-20, WINDOWHEIGHT / 2 - self.rect.height)
             self.speedx = random.randint(-5, -1)
@@ -338,7 +311,7 @@ while True:
         # collision bullet-mob
         hits_bullet = pygame.sprite.groupcollide(mobs,bullets,True,True, pygame.sprite.collide_mask)            #True,True ça kill le mob ET la bullet, cette fonction retourne une liste
         for hit in hits_bullet :        #on recrée un mob à chaque fois qu'on en kill un
-            m = Mob(score)
+            m = Mob()
             all_sprites.add(m)
             mobs.add(m)
         # collisions player-mob
