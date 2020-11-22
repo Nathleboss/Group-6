@@ -1,6 +1,8 @@
 import pygame, sys, random
 from pygame.locals import *
 
+# PUSH pour Nathan
+
 BACKGROUNDCOLOR = (106, 201, 223)
 RED = (255, 0, 0)
 YELLOW = (255,255,0)
