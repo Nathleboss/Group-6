@@ -1,7 +1,7 @@
 import pygame, sys, random
 from pygame.locals import *
 
-# PUSH pour Nathan
+
 
 BACKGROUNDCOLOR = (106, 201, 223)
 RED = (255, 0, 0)
@@ -109,7 +109,9 @@ class Player(pygame.sprite.Sprite):
         bullet = Bullet(self.rect.centerx +60, self.rect.bottom -5)
         all_sprites.add(bullet)
         bullets.add(bullet)
-        pygame.mixer.Sound('Blaster.wav').play()
+        blaster.set_volume(0.06)
+        blaster.play()
+
 
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
@@ -222,19 +224,21 @@ class Ground(pygame.sprite.Sprite):
 pygame.init()
 mainClock = pygame.time.Clock()
 windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
-pygame.display.set_caption(("MY GAME"))
+pygame.display.set_caption(("LA GUERRE"))
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont(None, 48)
 #Sons
 gameOverSound = pygame.mixer.Sound('roblox.wav')
 coinSound = pygame.mixer.Sound('smw_coin.wav')
 pygame.mixer.music.load('Fortunate Son.wav')
+blaster = pygame.mixer.Sound('Blaster.wav')
 pygame.mixer.music.set_volume(0.08)
 
 # Show the "Start" screen.
-windowSurface.fill(BACKGROUNDCOLOR)
-drawText('Dodger', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3),RED)
-drawText('Press a key to start.', font, windowSurface, (WINDOWWIDTH / 3) - 30, (WINDOWHEIGHT / 3) + 50,RED)
+Ecran_de_titre = pygame.image.load('Ecran_de_titre.png')
+windowSurface.blit(Ecran_de_titre,(0,0))
+#drawText('La guerre', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3),RED)
+#drawText('Press a key to start.', font, windowSurface, (WINDOWWIDTH / 3) - 30, (WINDOWHEIGHT / 3) + 50,RED)
 pygame.display.update()
 waitForPlayerToPressKey()
 
