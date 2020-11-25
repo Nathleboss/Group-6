@@ -5,7 +5,7 @@ from pygame.locals import *
 
 BACKGROUNDCOLOR = (106, 201, 223)
 RED = (255, 0, 0)
-YELLOW = (255,255,0)
+YELLOW = (255, 255, 0)
 BLACK = (0, 0, 0)
 WINDOWWIDTH = 900
 WINDOWHEIGHT = 600
@@ -40,7 +40,7 @@ def waitForPlayerToPressKey():
                 return
 
 def reset_groups():
-    all_sprites.empty();mobs.empty();bullets.empty();trees.empty();coins.empty()
+    all_sprites.empty(); mobs.empty(); bullets.empty(); trees.empty(); coins.empty()
     all_sprites.add(player)
     all_sprites.add(Ground(0))
     all_sprites.add(Ground(1))
@@ -68,6 +68,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 0
         self.mask = pygame.mask.from_surface(self.image)
         self.lives = 3
+
     def load_images(self):              #load_images() et animate() pour créer animation des hélices de l'hélicoptère
         self.frame0 = pygame.image.load("heli-1.png")
         self.frame1 = pygame.image.load("heli-2.png")
@@ -94,7 +95,7 @@ class Player(pygame.sprite.Sprite):
             self.speedx = 5
         if keystate[pygame.K_UP]:
             self.speedy = -5
-        if keystate[pygame.K_DOWN]:                 #si on meurt à cause d'autre chose que le sol et qu'on presse K_DOWN, en ayant pas réussi à relancer le jeu après une mort, ça fait bugguer
+        if keystate[pygame.K_DOWN]:
             self.speedy = 5
         self.rect.x += self.speedx
         self.rect.y += self.speedy
@@ -106,7 +107,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.top = 0
 
     def shoot(self):
-        bullet = Bullet(self.rect.centerx +60, self.rect.bottom -5)
+        bullet = Bullet(self.rect.centerx + 60, self.rect.bottom - 5)
         all_sprites.add(bullet)
         bullets.add(bullet)
         blaster.set_volume(0.06)
@@ -149,7 +150,7 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.speedx
-        # kill it if touches no ennemy and go too far
+        # kill it if touches no enemy and go too far
         if self.rect.right > WINDOWWIDTH:
             self.kill()
 
@@ -183,7 +184,7 @@ class Tree(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("Arbre.png")
-        self.imageSize = random.randint(60, WINDOWHEIGHT/2 - hauteur_sol)
+        self.imageSize = random.randint(60, int(WINDOWHEIGHT/2 - hauteur_sol))
         self.image = pygame.transform.scale(self.image, (self.imageSize, self.imageSize))
         self.rect = self.image.get_rect()
         self.rect.x = WINDOWWIDTH+round(self.rect.width)
@@ -203,7 +204,7 @@ class Ground(pygame.sprite.Sprite):
         self.rect.x = self.rect.width * self.position
         self.rect.y = WINDOWHEIGHT - self.rect.height
         self.speedx = -1
-        self.height = self.rect.height
+        #self.height = self.rect.height
 
 
     def update(self):
@@ -214,9 +215,9 @@ class Ground(pygame.sprite.Sprite):
             self.rect.y = WINDOWHEIGHT - self.rect.height
             self.speedx = -1
 
-    def get_height(self):
-        self.hauteur = self.rect.height
-        return self.hauteur
+    #def get_height(self):
+    #    self.hauteur = self.rect.height
+    #    return self.hauteur
 
 
 
@@ -224,7 +225,7 @@ class Ground(pygame.sprite.Sprite):
 pygame.init()
 mainClock = pygame.time.Clock()
 windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
-pygame.display.set_caption(("LA GUERRE"))
+pygame.display.set_caption("LA GUERRE")
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont(None, 48)
 #Sons
@@ -236,7 +237,7 @@ pygame.mixer.music.set_volume(0.08)
 
 # Show the "Start" screen.
 Ecran_de_titre = pygame.image.load('Ecran_de_titre.png')
-windowSurface.blit(Ecran_de_titre,(0,0))
+windowSurface.blit(Ecran_de_titre, (0, 0))
 #drawText('La guerre', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3),RED)
 #drawText('Press a key to start.', font, windowSurface, (WINDOWWIDTH / 3) - 30, (WINDOWHEIGHT / 3) + 50,RED)
 pygame.display.update()
@@ -313,7 +314,7 @@ while True:
         all_sprites.update()
 
         # collision bullet-mob
-        hits_bullet = pygame.sprite.groupcollide(mobs,bullets,True,True, pygame.sprite.collide_mask)            #True,True ça kill le mob ET la bullet, cette fonction retourne une liste
+        hits_bullet = pygame.sprite.groupcollide(mobs, bullets, True, True, pygame.sprite.collide_mask)            #True,True ça kill le mob ET la bullet, cette fonction retourne une liste
         for hit in hits_bullet :        #on recrée un mob à chaque fois qu'on en kill un
             m = Mob()
             all_sprites.add(m)
@@ -321,7 +322,7 @@ while True:
         # collisions player-mob
         hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_mask)
         # collisions player-coin + counter coins
-        hits_coin = pygame.sprite.spritecollide(player,coins,True,pygame.sprite.collide_mask)
+        hits_coin = pygame.sprite.spritecollide(player, coins, True, pygame.sprite.collide_mask)
         if hits_coin :
             coinSound.play()
             score += 100                    #est-ce que choper une coin ça donne +100 score ?
@@ -331,10 +332,12 @@ while True:
             coins.add(c)
             coins_number += 1                # si on arrive à genre 10 coins, on a accès au gun ?
         #collisions player-tree
-        hits_tree = pygame.sprite.spritecollide(player,trees,False, pygame.sprite.collide_mask)
+        hits_tree = pygame.sprite.spritecollide(player, trees, False, pygame.sprite.collide_mask)
         #if bad collision for player, then lose a lifepoint
         if hits or hits_tree or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
-            player.lives -= 1
+            gameOverSound.play()                #TODO change sound to another thing
+            for hit in hits:
+                player.lives -= 1               #code invincibility for x seconds after losing a lifepoint
             if player.lives <= 0:
                 player = Player()           #permet de bien reset le player pour nouvelle game
                 if score > topScore:
@@ -345,8 +348,8 @@ while True:
         windowSurface.fill(BACKGROUNDCOLOR)
         all_sprites.draw(windowSurface)
         drawText('Score: %s' % (score), font, windowSurface, 10, 0, RED)
-        drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 40,RED)
-        drawText('#Coins: %s' % (coins_number),font,windowSurface,10,80,YELLOW)
+        drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 40, RED)
+        drawText('#Coins: %s' % (coins_number), font, windowSurface, 10, 80, YELLOW)
         # *after* drawing everything, flip the display
         pygame.display.flip()
 
