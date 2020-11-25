@@ -56,6 +56,7 @@ def reset_groups():
         coins.add(c)
 
 
+
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -67,7 +68,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2)
         self.speed = 0
         self.mask = pygame.mask.from_surface(self.image)
-        self.lives = 3
+        self.lives = 300
+        self.touched = False
 
     def load_images(self):              #load_images() et animate() pour créer animation des hélices de l'hélicoptère
         self.frame0 = pygame.image.load("heli-1.png")
@@ -113,6 +115,8 @@ class Player(pygame.sprite.Sprite):
         blaster.set_volume(0.06)
         blaster.play()
 
+    def isInvincible(self):
+        pass#if self.touched = True
 
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
@@ -291,6 +295,8 @@ while True:
         score += 1
         # Clock FPS
         mainClock.tick(FPS)
+        last_update = 0
+        now = pygame.time.get_ticks()
         # Process input (event)
         for event in pygame.event.get():
             # check for closing window
@@ -320,7 +326,12 @@ while True:
             all_sprites.add(m)
             mobs.add(m)
         # collisions player-mob
-        hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_mask)
+        hits_mob = pygame.sprite.spritecollide(player, mobs, True, pygame.sprite.collide_mask)
+        for hit in hits_mob:                #TODO voir si on change la méthode d'apparition des mob, comme pour les arbres
+            m = Mob()
+            all_sprites.add(m)
+            mobs.add(m)
+
         # collisions player-coin + counter coins
         hits_coin = pygame.sprite.spritecollide(player, coins, True, pygame.sprite.collide_mask)
         if hits_coin:
@@ -332,13 +343,17 @@ while True:
             coins.add(c)
             coins_number += 1                # si on arrive à genre 10 coins, on a accès au gun ?
         #collisions player-tree
-        hits_tree = pygame.sprite.spritecollide(player, trees, False, pygame.sprite.collide_mask)
+        hits_tree = pygame.sprite.spritecollide(player, trees, True, pygame.sprite.collide_mask)
         #if bad collision for player, then lose a lifepoint
-        if hits or hits_tree or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
-            #gameOverSound.play()                #TODO change sound to another thing
-            #for hit in hits:
-            player.lives -= 1               #code invincibility for x seconds after losing a lifepoint
-            if player.lives <= 0:
+        if hits_mob or hits_tree or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
+            gameOverSound.play()                #TODO change sound to another thing
+            #player.touched = True
+            for hit in hits_mob:
+                player.lives -= 1               #code invincibility for x seconds after losing a lifepoint
+            for hit in hits_tree:
+                player.lives -= 1
+
+            if player.lives < 0 or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
                 player = Player()           #permet de bien reset le player pour nouvelle game
                 if score > topScore:
                     topScore = score
@@ -350,6 +365,7 @@ while True:
         drawText('Score: %s' % (score), font, windowSurface, 10, 0, RED)
         drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 40, RED)
         drawText('#Coins: %s' % (coins_number), font, windowSurface, 10, 80, YELLOW)
+        drawText('Lives: %s' % (player.lives), font, windowSurface, 10, 120, RED)
         # *after* drawing everything, flip the display
         pygame.display.flip()
 
