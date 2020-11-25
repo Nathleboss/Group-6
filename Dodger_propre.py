@@ -12,7 +12,7 @@ WINDOWHEIGHT = 600
 FPS = 100
 PLAYERMOVERATE = 5
 
-#lives = 3
+
 
 ADDNEWARBRERATE = 200
 
@@ -323,7 +323,7 @@ while True:
         hits = pygame.sprite.spritecollide(player, mobs, False, pygame.sprite.collide_mask)
         # collisions player-coin + counter coins
         hits_coin = pygame.sprite.spritecollide(player, coins, True, pygame.sprite.collide_mask)
-        if hits_coin :
+        if hits_coin:
             coinSound.play()
             score += 100                    #est-ce que choper une coin ça donne +100 score ?
         for hit in hits_coin:
@@ -335,9 +335,9 @@ while True:
         hits_tree = pygame.sprite.spritecollide(player, trees, False, pygame.sprite.collide_mask)
         #if bad collision for player, then lose a lifepoint
         if hits or hits_tree or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
-            gameOverSound.play()                #TODO change sound to another thing
-            for hit in hits:
-                player.lives -= 1               #code invincibility for x seconds after losing a lifepoint
+            #gameOverSound.play()                #TODO change sound to another thing
+            #for hit in hits:
+            player.lives -= 1               #code invincibility for x seconds after losing a lifepoint
             if player.lives <= 0:
                 player = Player()           #permet de bien reset le player pour nouvelle game
                 if score > topScore:
@@ -358,7 +358,7 @@ while True:
     gameOverSound.play()
 
     drawText('GAME OVER', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3), RED)
-    drawText('Press a key to play again', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 50, RED)
+    drawText('Appuie sur une touche pour rejouer', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 50, RED)
     pygame.display.update()
     reset_groups()
     waitForPlayerToPressKey()
