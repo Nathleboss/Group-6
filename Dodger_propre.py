@@ -3,7 +3,7 @@ from pygame.locals import *
 
 
 
-BACKGROUNDCOLOR = (106, 201, 223)
+BACKGROUNDCOLOR = (106, 200, 223)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 BLACK = (0, 0, 0)
@@ -234,7 +234,7 @@ pygame.mouse.set_visible(False)
 font = pygame.font.SysFont(None, 48)
 #Sons
 gameOverSound = pygame.mixer.Sound('MissionFailed.wav')
-#lostLifeSound = pygame.mixer.Sound('.wav')
+lostLifeSound = pygame.mixer.Sound('Mayday Sound.wav')
 coinSound = pygame.mixer.Sound('smw_coin.wav')
 pygame.mixer.music.load('Fortunate Son.wav')
 blaster = pygame.mixer.Sound('Blaster.wav')
@@ -348,11 +348,13 @@ while True:
         hits_tree = pygame.sprite.spritecollide(player, trees, True, pygame.sprite.collide_mask)
         #if bad collision for player, then lose a lifepoint
         if hits_mob or hits_tree or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
-            #lostLifeSound.play()                #TODO change sound to another thing
-            for hit in hits_mob:
-                player.lives -= 1               #code invincibility for x seconds after losing a lifepoint
-            for hit in hits_tree:
-                player.lives -= 1
+            if hits_mob or hits_tree:
+                lostLifeSound.set_volume(0.15)
+                lostLifeSound.play()
+                for hit in hits_mob:
+                    player.lives -= 1               #code invincibility for x seconds after losing a lifepoint
+                for hit in hits_tree:
+                    player.lives -= 1
             if player.lives < 0 or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
                 player = Player()           #permet de bien reset le player pour nouvelle game
                 if score > topScore:
