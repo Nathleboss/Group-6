@@ -16,6 +16,14 @@ ADDNEWARBRERATE = 100
 PLAYERMOVERATE = 5
 Player_Health = 10
 
+def IfTimeHasPassed(t):
+    now = pygame.time.get_ticks()
+    last_update = 0
+    if now - last_update > t:
+        last_update = now
+        return True
+
+
 def terminate():
     pygame.quit()
     sys.exit()

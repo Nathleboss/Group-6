@@ -347,7 +347,7 @@ while True:
         #collisions player-tree
         hits_tree = pygame.sprite.spritecollide(player, trees, True, pygame.sprite.collide_mask)
         #if bad collision for player, then lose a lifepoint
-        if hits_mob or hits_tree or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
+        if hits_mob or hits_tree or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol+10:
             if hits_mob or hits_tree:
                 lostLifeSound.set_volume(0.15)
                 lostLifeSound.play()
@@ -355,7 +355,7 @@ while True:
                     player.lives -= 1               #code invincibility for x seconds after losing a lifepoint
                 for hit in hits_tree:
                     player.lives -= 1
-            if player.lives < 0 or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
+            if player.lives <= 0 or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
                 player = Player()           #permet de bien reset le player pour nouvelle game
                 if score > topScore:
                     topScore = score
@@ -375,8 +375,11 @@ while True:
     pygame.mixer.music.stop()
     gameOverSound.set_volume(0.06)
     gameOverSound.play()
+    pygame.display.flip()
     drawText('GAME OVER', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3), RED)
     drawText('Appuie sur une touche pour rejouer', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 50, RED)
+    drawText('Score: %s' % (score), font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3)+100, RED)
+    drawText('Top Score: %s' % (topScore), font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3)+150, RED)
     pygame.display.update()
     reset_groups()
     waitForPlayerToPressKey()
