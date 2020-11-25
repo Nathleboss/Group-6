@@ -68,7 +68,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2)
         self.speed = 0
         self.mask = pygame.mask.from_surface(self.image)
-        self.lives = 300
+        self.lives = 3
         self.touched = False
 
     def load_images(self):              #load_images() et animate() pour créer animation des hélices de l'hélicoptère
@@ -233,10 +233,12 @@ pygame.display.set_caption("LA GUERRE")
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont(None, 48)
 #Sons
-gameOverSound = pygame.mixer.Sound('roblox.wav')
+gameOverSound = pygame.mixer.Sound('MissionFailed.wav')
+#lostLifeSound = pygame.mixer.Sound('.wav')
 coinSound = pygame.mixer.Sound('smw_coin.wav')
 pygame.mixer.music.load('Fortunate Son.wav')
 blaster = pygame.mixer.Sound('Blaster.wav')
+
 pygame.mixer.music.set_volume(0.08)
 
 # Show the "Start" screen.
@@ -346,13 +348,11 @@ while True:
         hits_tree = pygame.sprite.spritecollide(player, trees, True, pygame.sprite.collide_mask)
         #if bad collision for player, then lose a lifepoint
         if hits_mob or hits_tree or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
-            gameOverSound.play()                #TODO change sound to another thing
-            #player.touched = True
+            #lostLifeSound.play()                #TODO change sound to another thing
             for hit in hits_mob:
                 player.lives -= 1               #code invincibility for x seconds after losing a lifepoint
             for hit in hits_tree:
                 player.lives -= 1
-
             if player.lives < 0 or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol:
                 player = Player()           #permet de bien reset le player pour nouvelle game
                 if score > topScore:
@@ -371,8 +371,8 @@ while True:
 
     #Écran de game-over
     pygame.mixer.music.stop()
+    gameOverSound.set_volume(0.06)
     gameOverSound.play()
-
     drawText('GAME OVER', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3), RED)
     drawText('Appuie sur une touche pour rejouer', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 50, RED)
     pygame.display.update()
