@@ -237,8 +237,6 @@ windowSurface.blit(Ecran_de_titre, (0, 0))
 pygame.display.update()
 waitForPlayerToPressKey()
 
-coins_number = 0
-topScore = 0
 
 #Création des groups
 all_sprites = pygame.sprite.Group()
@@ -250,6 +248,8 @@ trees = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
 
+coins_number = 0
+topScore = 0
 
 # Game loop
 running = True
@@ -305,14 +305,16 @@ while True:
         hits_coin = pygame.sprite.spritecollide(player, coins, True, pygame.sprite.collide_mask)
         if hits_coin:
             coinSound.play()
-            score += 100                    #est-ce que choper une coin ça donne +100 score ?
+            score += 100                    #TODO : est-ce que choper une coin ça donne +100 score ?
         for hit in hits_coin:
             c = Coin()
             all_sprites.add(c)
             coins.add(c)
-            coins_number += 1                # si on arrive à genre 10 coins, on a accès au gun ?
+            coins_number += 1                # TODO : si on arrive à genre 10 coins, on a accès au gun ?
+
         #collisions player-tree
         hits_tree = pygame.sprite.spritecollide(player, trees, True, pygame.sprite.collide_mask)
+
         #if bad collision for player, then lose a lifepoint
         if hits_mob or hits_tree or player.rect.bottom >= WINDOWHEIGHT-hauteur_sol+10:
             if hits_mob or hits_tree:
