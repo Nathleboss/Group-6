@@ -12,11 +12,9 @@ WINDOWHEIGHT = 600
 FPS = 100
 PLAYERMOVERATE = 5
 
-
-
 ADDNEWARBRERATE = 200
 
-# TODO A faire autrement !! on peut sûrement faire avec un colliderect, mais ça nous dit pas pourquoi ça marche pas avec ground.height
+# TODO A faire autrement ! On arrive pas à dégager la hauteur de l'image dans la calsse "ground"
 hauteur_sol = pygame.image.load("Sol.png").get_height()
 
 def terminate():
@@ -46,11 +44,11 @@ def reset_groups():
     all_sprites.add(Ground(1))
     all_sprites.add(Ground(2))
 
-    for i in range(6):  # Nombre de mobs visibles à l'écran en même temps
+    for i in range(6):  # Nombre de "Mob" visibles à l'écran en même temps
         m = Mob()
         all_sprites.add(m)
         mobs.add(m)
-    for i in range(1):  # Pareil pour les coins
+    for i in range(1):  # Nombre de "Coin" visible à l'écran en même temps
         c = Coin()
         all_sprites.add(c)
         coins.add(c)
@@ -115,8 +113,8 @@ class Player(pygame.sprite.Sprite):
         blaster.set_volume(0.06)
         blaster.play()
 
-    def isInvincible(self):
-        pass#if self.touched = True
+    #def isInvincible(self):            #TODO : fonction pour "temps-mort" après avoir perdu une vie
+        #if self.touched = True
 
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
@@ -127,14 +125,11 @@ class Mob(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = WINDOWWIDTH
         self.rect.y = random.randrange(-20, WINDOWHEIGHT / 2 - self.rect.height)
-        # self.speedy = random.randrange(1,8)
         self.speedx = random.randrange(-5, -1)
         self.mask = pygame.mask.from_surface(self.image)
-        #if score > 5000:
-            #pass
+
 
     def update(self):
-        # self.rect.y += self.speedy
         self.rect.x += self.speedx
         if self.rect.left < -self.rect.width:  # si l'ennemi dépasse la fenêtre à gauche, on le remet à un endroit random à droite
             self.rect.x = WINDOWWIDTH
@@ -154,14 +149,13 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.speedx
-        # kill it if touches no enemy and go too far
-        if self.rect.right > WINDOWWIDTH:
+        if self.rect.right > WINDOWWIDTH:       # kill it if touches no enemy and go too far
             self.kill()
 
-class Coin(pygame.sprite.Sprite):               #pourquoi pas faire une superclass qui contient les pièces et les bonus ?
+class Coin(pygame.sprite.Sprite):               #TODO: pourquoi pas faire une superclass qui contient les pièces et les bonus ?
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("Coin.png")      #mettre une animation avec plusieurs modèles de coins qui tourne comme hélico ?
+        self.image = pygame.image.load("Coin.png")      #TODO:mettre une animation avec plusieurs modèles de coins qui tourne comme hélico ?
         self.image = pygame.transform.scale(self.image,(40,40))
         self.rect = self.image.get_rect()
         self.rect.x = WINDOWWIDTH
@@ -173,8 +167,7 @@ class Coin(pygame.sprite.Sprite):               #pourquoi pas faire une supercla
     def update(self):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
-        #déplacement "sinusoïdale":
-        if self.rect.bottom > WINDOWHEIGHT -100 :
+        if self.rect.bottom > WINDOWHEIGHT -100 :       #déplacement "sinusoïdale":
             self.speedy=  -3
         if self.rect.top < 50 :
             self.speedy = 3
@@ -208,7 +201,6 @@ class Ground(pygame.sprite.Sprite):
         self.rect.x = self.rect.width * self.position
         self.rect.y = WINDOWHEIGHT - self.rect.height
         self.speedx = -1
-        #self.height = self.rect.height
 
 
     def update(self):
@@ -219,10 +211,6 @@ class Ground(pygame.sprite.Sprite):
             self.rect.y = WINDOWHEIGHT - self.rect.height
             self.speedx = -1
 
-    #def get_height(self):
-    #    self.hauteur = self.rect.height
-    #    return self.hauteur
-
 
 
 # initialize pygame and create window + police d'écriture (fonts)
@@ -232,6 +220,7 @@ windowSurface = pygame.display.set_mode((WINDOWWIDTH, WINDOWHEIGHT))
 pygame.display.set_caption("LA GUERRE")
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont(None, 48)
+
 #Sons
 gameOverSound = pygame.mixer.Sound('MissionFailed.wav')
 lostLifeSound = pygame.mixer.Sound('Mayday Sound.wav')
@@ -241,11 +230,10 @@ blaster = pygame.mixer.Sound('Blaster.wav')
 
 pygame.mixer.music.set_volume(0.08)
 
+
 # Show the "Start" screen.
 Ecran_de_titre = pygame.image.load('Ecran_de_titre.png')
 windowSurface.blit(Ecran_de_titre, (0, 0))
-#drawText('La guerre', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3),RED)
-#drawText('Press a key to start.', font, windowSurface, (WINDOWWIDTH / 3) - 30, (WINDOWHEIGHT / 3) + 50,RED)
 pygame.display.update()
 waitForPlayerToPressKey()
 
@@ -262,28 +250,7 @@ trees = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
 
-"""
-all_sprites.add(Ground(0))
-all_sprites.add(Ground(1))
-all_sprites.add(Ground(2))
 
-for i in range(6):  # Nombre de mobs visibles à l'écran en même temps
-    m = Mob()
-    all_sprites.add(m)
-    mobs.add(m)
-for i in range(1):   #Pareil pour les coins
-    c = Coin()
-    all_sprites.add(c)
-    coins.add(c)
-
-
-
-#for i in range(10):  # Nombre de mobs visibles à l'écran en même temps
- #   t = Tree()
-  #  all_sprites.add(t)
-  #  trees.add(t)
-"""
-                        ###pas besoin de la partie en commentaire vert, présent dans la fonction reset_groups()
 # Game loop
 running = True
 while True:
