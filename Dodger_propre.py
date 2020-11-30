@@ -106,6 +106,8 @@ class Player(pygame.sprite.Sprite):
         if self.rect.top <= 0:
             self.rect.top = 0
 
+        self.rect.y += 1
+
     def shoot(self):
         bullet = Bullet(self.rect.centerx + 60, self.rect.bottom - 5)
         all_sprites.add(bullet)
@@ -250,6 +252,7 @@ all_sprites.add(player)
 
 coins_number = 0
 topScore = 0
+bests_score = []
 
 # Game loop
 running = True
