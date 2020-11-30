@@ -87,16 +87,28 @@ class Player(pygame.sprite.Sprite):
         self.speedx = 0
         self.speedy = 0
         keystate = pygame.key.get_pressed()
-        if keystate[pygame.K_LEFT]:
-            self.speedx = -5
-        if keystate[pygame.K_RIGHT]:
-            self.speedx = 5
-        if keystate[pygame.K_UP]:
-            self.speedy = -5
-        if keystate[pygame.K_DOWN]:
-            self.speedy = 5
-        self.rect.x += self.speedx
-        self.rect.y += self.speedy
+        if confused == False :
+            if keystate[pygame.K_LEFT]:
+                self.speedx = -5
+            if keystate[pygame.K_RIGHT]:
+                self.speedx = 5
+            if keystate[pygame.K_UP]:
+                self.speedy = -5
+            if keystate[pygame.K_DOWN]:
+                self.speedy = 5
+            self.rect.x += self.speedx
+            self.rect.y += self.speedy
+        else :
+            if keystate[pygame.K_LEFT]:
+                self.speedx = 5
+            if keystate[pygame.K_RIGHT]:
+                self.speedx = -5
+            if keystate[pygame.K_UP]:
+                self.speedy = 5
+            if keystate[pygame.K_DOWN]:
+                self.speedy = -5
+            self.rect.x += self.speedx
+            self.rect.y += self.speedy
         if self.rect.right > WINDOWWIDTH:
             self.rect.right = WINDOWWIDTH
         if self.rect.x < 0:         #ne pas sortir de l'écran
@@ -188,7 +200,7 @@ class Tree(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (self.imageSize, self.imageSize))
         self.rect = self.image.get_rect()
         self.rect.x = WINDOWWIDTH+round(self.rect.width)
-        self.rect.y = WINDOWHEIGHT-self.rect.height- hauteur_sol
+        self.rect.y = WINDOWHEIGHT-self.rect.height - hauteur_sol
         self.speedx = -1
         self.mask = pygame.mask.from_surface(self.image)
 
@@ -254,15 +266,17 @@ trees = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
 
-
+confused = False
 # Game loop
-running = True
+
 while True:
     score = 0
     coins_number = 0
     pygame.mixer.music.play(-1, 0.0)
     reset_groups()
     arbreAddCounter = 0
+    running = True
+    confused = False
 
     while running:
         score += 1
@@ -308,6 +322,7 @@ while True:
         # collisions player-coin + counter coins
         hits_coin = pygame.sprite.spritecollide(player, coins, True, pygame.sprite.collide_mask)
         if hits_coin:
+            confused = True
             coinSound.play()
             score += 100                    #est-ce que choper une coin ça donne +100 score ?
         for hit in hits_coin:
@@ -333,7 +348,10 @@ while True:
                 break
 
         # Draw / render
-        windowSurface.fill(BACKGROUNDCOLOR)
+        if confused :
+            windowSurface.fill((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+        if not confused :
+            windowSurface.fill(BACKGROUNDCOLOR)
         all_sprites.draw(windowSurface)
         drawText('Score: %s' % (score), font, windowSurface, 10, 0, RED)
         drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 40, RED)
