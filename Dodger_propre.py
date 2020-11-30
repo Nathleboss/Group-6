@@ -65,7 +65,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 0
         self.mask = pygame.mask.from_surface(self.image)
         self.lives = 3
-        self.touched = False
+        self.max_lives = self.lives
 
     def load_images(self):              #load_images() et animate() pour créer animation des hélices de l'hélicoptère
         self.frame0 = pygame.image.load("heli-1.png")
@@ -357,6 +357,8 @@ while True:
         drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 40, RED)
         drawText('#Coins: %s' % (coins_number), font, windowSurface, 10, 80, YELLOW)
         drawText('Lives: %s' % (player.lives), font, windowSurface, 10, 120, RED)
+        pygame.draw.rect(windowSurface, (255, 0, 0), (10, 160, 150, 10))
+        pygame.draw.rect(windowSurface, (0, 255, 0), (10, 160, player.lives*150/player.max_lives, 10))
         # *after* drawing everything, flip the display
         pygame.display.flip()
 
