@@ -36,7 +36,7 @@ def waitForPlayerToPressKey():
                 return
 
 def reset_groups():
-    all_sprites.empty(); mobs.empty(); bullets.empty(); trees.empty(); coins.empty()
+    all_sprites.empty(); mobs.empty(); bullets.empty(); trees.empty(); coins.empty(); malus.empty()
     all_sprites.add(player)
     all_sprites.add(Ground(0))
     all_sprites.add(Ground(1))
@@ -50,7 +50,10 @@ def reset_groups():
         c = Coin()
         all_sprites.add(c)
         coins.add(c)
-
+    for i in range(1):  # Pareil pour les malus
+        m = Malus()
+        all_sprites.add(m)
+        malus.add(m)
 
 
 class Player(pygame.sprite.Sprite):
@@ -192,6 +195,35 @@ class Coin(pygame.sprite.Sprite):               #pourquoi pas faire une supercla
             self.speedx = -3
             self.speedy = random.randrange(-3, 3)
 
+class Malus(pygame.sprite.Sprite):               #pourquoi pas faire une superclass qui contient les pièces et les bonus ?
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = pygame.Surface((40, 40))
+        self.image.fill((0, 0, 0))
+        self.rect = self.image.get_rect()
+        self.rect.x = WINDOWWIDTH
+        self.rect.y = random.randrange(0,WINDOWHEIGHT-100)
+        self.speedx = -3
+        self.speedy = random.randrange(-3,3)
+        self.mask = pygame.mask.from_surface(self.image)
+        self.last_update = 0
+
+    def update(self):
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
+        #déplacement "sinusoïdale":
+        if self.rect.bottom > WINDOWHEIGHT -100 :
+            self.speedy=  -3
+        if self.rect.top < 50 :
+            self.speedy = 3
+        if self.rect.left < -self.rect.width or abs(self.rect.top) > WINDOWHEIGHT :       #si la pièce sort sur la gauche ou en haut/bas
+            self.rect.x = WINDOWWIDTH
+            self.rect.y = random.randrange(0, WINDOWHEIGHT - 100)
+            self.speedx = -3
+            self.speedy = random.randrange(-3, 3)
+
+
+
 class Tree(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
@@ -261,6 +293,7 @@ all_sprites = pygame.sprite.Group()
 mobs = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 coins = pygame.sprite.Group()
+malus = pygame.sprite.Group()
 ground = pygame.sprite.Group()
 trees = pygame.sprite.Group()
 player = Player()
@@ -322,14 +355,29 @@ while True:
         # collisions player-coin + counter coins
         hits_coin = pygame.sprite.spritecollide(player, coins, True, pygame.sprite.collide_mask)
         if hits_coin:
-            confused = True
+            #confused = True
             coinSound.play()
             score += 100                    #est-ce que choper une coin ça donne +100 score ?
         for hit in hits_coin:
             c = Coin()
             all_sprites.add(c)
             coins.add(c)
-            coins_number += 1                # si on arrive à genre 10 coins, on a accès au gun ?
+            coins_number += 1              # si on arrive à genre 10 coins, on a accès au gun ?
+
+        # collisions player-malus
+        hits_malus = pygame.sprite.spritecollide(player, malus, True, pygame.sprite.collide_mask)
+        if hits_malus:
+            confused = True
+            last_update = pygame.time.get_ticks()
+
+        now = pygame.time.get_ticks()
+
+        if confused == True:
+            if now - last_update > 2000:  # en millisecondes
+                    last_update = now
+                    confused = False
+
+
         #collisions player-tree
         hits_tree = pygame.sprite.spritecollide(player, trees, True, pygame.sprite.collide_mask)
         #if bad collision for player, then lose a lifepoint
@@ -349,7 +397,8 @@ while True:
 
         # Draw / render
         if confused :
-            windowSurface.fill((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+            #windowSurface.fill((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
+            windowSurface.fill((random.randint(0, 255), 0, 0))
         if not confused :
             windowSurface.fill(BACKGROUNDCOLOR)
         all_sprites.draw(windowSurface)
