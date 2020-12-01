@@ -355,7 +355,6 @@ while True:
         # collisions player-coin + counter coins
         hits_coin = pygame.sprite.spritecollide(player, coins, True, pygame.sprite.collide_mask)
         if hits_coin:
-            #confused = True
             coinSound.play()
             score += 100                    #est-ce que choper une coin ça donne +100 score ?
         for hit in hits_coin:
@@ -368,15 +367,17 @@ while True:
         hits_malus = pygame.sprite.spritecollide(player, malus, True, pygame.sprite.collide_mask)
         if hits_malus:
             confused = True
-            last_update = pygame.time.get_ticks()
+            l_update = pygame.time.get_ticks()
 
-        now = pygame.time.get_ticks()
 
-        if confused == True:
-            if now - last_update > 2000:  # en millisecondes
-                    last_update = now
-                    confused = False
+        if confused==True :
+            if now - l_update > 2000:  # en millisecondes
+                confused = False
 
+        for hit in hits_malus:
+            m = Malus()
+            all_sprites.add(m)
+            malus.add(m)
 
         #collisions player-tree
         hits_tree = pygame.sprite.spritecollide(player, trees, True, pygame.sprite.collide_mask)
@@ -397,7 +398,6 @@ while True:
 
         # Draw / render
         if confused :
-            #windowSurface.fill((random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)))
             windowSurface.fill((random.randint(0, 255), 0, 0))
         if not confused :
             windowSurface.fill(BACKGROUNDCOLOR)
