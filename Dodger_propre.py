@@ -10,8 +10,8 @@ WINDOWWIDTH = 900
 WINDOWHEIGHT = 600
 FPS = 100
 PLAYERMOVERATE = 5
-ADDNEWARBRERATE = 200
-ADDNEWMALUS = 1000
+ADDNEWARBRERATE = 500
+
 
 # TODO A faire autrement !! on peut sûrement faire avec un colliderect, mais ça nous dit pas pourquoi ça marche pas avec ground.height
 hauteur_sol = pygame.image.load("Sol.png").get_height()
@@ -51,7 +51,7 @@ def reset_groups():
         c = Coin()
         all_sprites.add(c)
         coins.add(c)
-    for i in range(1):  # Pareil pour les malus
+    for i in range(1):  # Pareil pour les coins
         m = Malus()
         all_sprites.add(m)
         malus.add(m)
@@ -199,8 +199,8 @@ class Coin(pygame.sprite.Sprite):               #pourquoi pas faire une supercla
 class Malus(pygame.sprite.Sprite):               #pourquoi pas faire une superclass qui contient les pièces et les bonus ?
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.Surface((40, 40))
-        self.image.fill((0, 0, 0))
+        self.image = pygame.image.load("malus_confusion.png")
+        self.image = pygame.transform.scale(self.image, (40, 40))
         self.rect = self.image.get_rect()
         self.rect.x = WINDOWWIDTH
         self.rect.y = random.randrange(0,WINDOWHEIGHT-100)
@@ -288,6 +288,7 @@ waitForPlayerToPressKey()
 
 coins_number = 0
 topScore = 0
+angle = 0
 
 #Création des groups
 all_sprites = pygame.sprite.Group()
@@ -309,7 +310,6 @@ while True:
     pygame.mixer.music.play(-1, 0.0)
     reset_groups()
     arbreAddCounter = 0
-    malusAddCounter = 0
     running = True
     confused = False
 
@@ -373,13 +373,10 @@ while True:
 
 
         if confused==True :
-            if now - l_update > 2000:  # en millisecondes
+            if now - l_update > 1000:  # en millisecondes
                 confused = False
 
-        malusAddCounter += 1
-
-        if malusAddCounter == ADDNEWMALUS:
-            malusAddCounter = 0
+        for hit in hits_malus:
             m = Malus()
             all_sprites.add(m)
             malus.add(m)
