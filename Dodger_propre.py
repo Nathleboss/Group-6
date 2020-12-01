@@ -11,6 +11,7 @@ WINDOWHEIGHT = 600
 FPS = 100
 PLAYERMOVERATE = 5
 ADDNEWARBRERATE = 200
+ADDNEWMALUS = 1000
 
 # TODO A faire autrement !! on peut sûrement faire avec un colliderect, mais ça nous dit pas pourquoi ça marche pas avec ground.height
 hauteur_sol = pygame.image.load("Sol.png").get_height()
@@ -214,7 +215,7 @@ class Malus(pygame.sprite.Sprite):               #pourquoi pas faire une supercl
         #déplacement "sinusoïdale":
         if self.rect.bottom > WINDOWHEIGHT -100 :
             self.speedy=  -3
-        if self.rect.top < 50 :
+        if self.rect.top < 10 :
             self.speedy = 3
         if self.rect.left < -self.rect.width or abs(self.rect.top) > WINDOWHEIGHT :       #si la pièce sort sur la gauche ou en haut/bas
             self.rect.x = WINDOWWIDTH
@@ -308,6 +309,7 @@ while True:
     pygame.mixer.music.play(-1, 0.0)
     reset_groups()
     arbreAddCounter = 0
+    malusAddCounter = 0
     running = True
     confused = False
 
@@ -374,7 +376,10 @@ while True:
             if now - l_update > 2000:  # en millisecondes
                 confused = False
 
-        for hit in hits_malus:
+        malusAddCounter += 1
+
+        if malusAddCounter == ADDNEWMALUS:
+            malusAddCounter = 0
             m = Malus()
             all_sprites.add(m)
             malus.add(m)
