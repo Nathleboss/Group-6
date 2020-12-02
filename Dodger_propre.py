@@ -408,8 +408,8 @@ while True:
         drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 40, RED)
         drawText('#Coins: %s' % (coins_number), font, windowSurface, 10, 80, YELLOW)
         drawText('Lives: %s' % (player.lives), font, windowSurface, 10, 120, RED)
-        pygame.draw.rect(windowSurface, (255, 0, 0), (10, 160, 150, 10))
-        pygame.draw.rect(windowSurface, (0, 255, 0), (10, 160, player.lives*150/player.max_lives, 10))
+        pygame.draw.rect(windowSurface, (255, 0, 0), (player.rect.x + 30, player.rect.y - 10, 150, 10))
+        pygame.draw.rect(windowSurface, (0, 255, 0), (player.rect.x + 30, player.rect.y - 10, player.lives*150/player.max_lives, 10))
         # *after* drawing everything, flip the display
         pygame.display.flip()
 
