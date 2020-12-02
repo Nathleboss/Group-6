@@ -57,7 +57,7 @@ def reset_groups():
         malus.add(m)
 
 def rotate(surface, angle):
-    rotated_surface = pygame.transform.rotozoom(surface, angle, 1)
+    rotated_surface = pygame.transform.rotate(surface, angle)
     rotated_rect = rotated_surface.get_rect()
     return rotated_surface, rotated_rect
 
@@ -224,7 +224,7 @@ class Malus(pygame.sprite.Sprite):               #pourquoi pas faire une supercl
     def update(self):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
-        #self.image, self.rect = (self.image, angle)
+        #self.image, self.rect = rotate(self.image, angle)
         #déplacement "sinusoïdale":
         if self.rect.bottom > WINDOWHEIGHT -100:
             self.speedy = -3
@@ -365,11 +365,12 @@ while True:
             all_sprites.add(m)
             mobs.add(m)
 
+
         # collisions player-coin + counter coins
         hits_coin = pygame.sprite.spritecollide(player, coins, True, pygame.sprite.collide_mask)
         if hits_coin:
             coinSound.play()
-            score += 100                    #est-ce que choper une coin ça donne +100 score ?
+            score += 100
         for hit in hits_coin:
             c = Coin()
             all_sprites.add(c)
