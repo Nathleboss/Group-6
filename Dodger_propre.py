@@ -138,28 +138,36 @@ class Player(pygame.sprite.Sprite):
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("plane_image.png")
-        self.imageSize = random.randint(100, 300)
-        self.image = pygame.transform.scale(self.image, (self.imageSize, self.imageSize))
-        self.rect = self.image.get_rect()
-        self.rect.x = WINDOWWIDTH
-        self.rect.y = random.randrange(-20, WINDOWHEIGHT / 2 - self.rect.height)
-        self.speedx = random.randrange(-5, -1)
-
+        if score < 3000:
+            self.image = pygame.image.load("plane_image.png")
+            self.imageSize = random.randint(100, 300)
+            self.image = pygame.transform.scale(self.image, (self.imageSize, self.imageSize))
+            self.rect = self.image.get_rect()
+            self.rect.x = WINDOWWIDTH
+            self.rect.y = random.randrange(-20, WINDOWHEIGHT / 2 - self.rect.height)
+            self.speedx = random.randrange(-5, -1)
+        else:
+            self.image = pygame.image.load("OVNI.png")
+            self.imageSize = random.randint(100, 300)
+            self.image = pygame.transform.scale(pygame.image.load("OVNI.png"), (int(self.imageSize/1.5), int(self.imageSize/3)))
+            self.rect = self.image.get_rect()
+            self.rect.x = WINDOWWIDTH
+            self.rect.y = random.randrange(-5, WINDOWHEIGHT / 2 - self.rect.height)
+            self.speedx = random.randrange(-6, -2)
 
     def update(self):
-        self.rect.x += self.speedx
         if self.rect.left < -self.rect.width:  # if a mob gets past the left border of the screen, we teleport it to the right randomly
             self.rect.x = WINDOWWIDTH
             self.rect.y = random.randrange(-20, WINDOWHEIGHT / 2 - self.rect.height)
             self.speedx = random.randint(-5, -1)
-        if score > 500:        #level 2, we can improve by adding more levels
-            self.image = pygame.transform.scale(pygame.image.load("OVNI.png"), (int(self.imageSize/1.5),int(self.imageSize/3)))
-            self.rect = self.image.get_rect()
-            self.rect.x = WINDOWWIDTH
-            self.rect.y = random.randrange(-20, WINDOWHEIGHT / 2 - self.rect.height)
-            self.speedx = random.randint(-5, -1)
+            if score > 3000:        #level 2, we can improve by adding more levels
+                self.image = pygame.transform.scale(pygame.image.load("OVNI.png"), (int(self.imageSize/1.5), int(self.imageSize/3)))
+                self.rect = self.image.get_rect()
+                self.rect.x = WINDOWWIDTH
+                self.rect.y = random.randrange(-5, WINDOWHEIGHT/2 - self.rect.height)
+                self.speedx = random.randint(-6, -2)
         self.mask = pygame.mask.from_surface(self.image)
+        self.rect.x += self.speedx
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -424,7 +432,7 @@ while True:
         if confused:
             windowSurface.fill((random.randint(0, 255), 0, 0))
         if not confused:
-            if score < 5000:
+            if score < 3000:
                 windowSurface.fill(BACKGROUNDCOLOR)
             else:
                 windowSurface.blit(pygame.image.load("space_background.png"), (0, 0))
