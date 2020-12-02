@@ -6,6 +6,7 @@ BACKGROUNDCOLOR = (106, 200, 223)
 RED = (255, 0, 0)
 YELLOW = (255, 255, 0)
 BLACK = (0, 0, 0)
+GREEN = (0,255,0)
 WINDOWWIDTH = 900
 WINDOWHEIGHT = 600
 FPS = 100
@@ -56,17 +57,6 @@ def reset_groups():
         all_sprites.add(m)
         malus.add(m)
 
-def rotate(surface, angle):
-    rotated_surface = pygame.transform.rotate(surface, angle)
-    rotated_rect = rotated_surface.get_rect()
-    return rotated_surface, rotated_rect
-
-def IfTimeHasPassed(time):
-    now = pygame.time.get_ticks()
-    last_update = 0
-    if now - last_update > time:
-        last_update = now
-        return True
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -80,7 +70,7 @@ class Player(pygame.sprite.Sprite):
         self.speed = 0
         self.mask = pygame.mask.from_surface(self.image)
         self.lives = 3
-        self.max_lives = self.lives
+        self.max_lives = self.lives         #valeur constante = 3, nécessaire pour le fonctionnement de la barre de vie
 
     def load_images(self):              #load_images() et animate() pour créer animation des hélices de l'hélicoptère
         self.frame0 = pygame.image.load("heli-1.png").convert_alpha()
@@ -93,7 +83,6 @@ class Player(pygame.sprite.Sprite):
         now = pygame.time.get_ticks()
         if now - self.last_update > 50:           #en millisecondes
             self.last_update = now
-        #if IfTimeHasPassed(50) :
             self.current_frame = (self.current_frame+1) % len(self.frames)      #1%4=1; 2%4=2; 3%4=3; 4%4=0, 5%4=1 etc...
             self.image = self.frames[self.current_frame]
             self.mask = pygame.mask.from_surface(self.image)
@@ -202,7 +191,7 @@ class Coin(pygame.sprite.Sprite):               #pourquoi pas faire une supercla
             self.speedy = -3
         if self.rect.top < 50:
             self.speedy = 3
-        if self.rect.left < -self.rect.width :       #si la pièce sort sur la gauche
+        if self.rect.left < -self.rect.width:       #si la pièce sort sur la gauche
             self.rect.x = WINDOWWIDTH
             self.rect.y = random.randrange(0, WINDOWHEIGHT - 100)
             self.speedx = -3
@@ -211,7 +200,10 @@ class Coin(pygame.sprite.Sprite):               #pourquoi pas faire une supercla
 class Malus(pygame.sprite.Sprite):               #pourquoi pas faire une superclass qui contient les pièces et les bonus ?
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("malus_confusion.png")
+        self.current_frame = 0
+        self.last_update = 0
+        self.load_images()
+        self.image = self.frames[0]
         self.image = pygame.transform.scale(self.image, (40, 40))
         self.rect = self.image.get_rect()
         self.rect.x = WINDOWWIDTH
@@ -221,7 +213,25 @@ class Malus(pygame.sprite.Sprite):               #pourquoi pas faire une supercl
         self.mask = pygame.mask.from_surface(self.image)
         self.last_update = 0
 
+    def load_images(self):
+        self.frame0 = pygame.transform.scale(pygame.image.load("malus_confusion.png").convert_alpha(), (40, 40))
+        self.frame1 = pygame.transform.scale(pygame.image.load("malus_confusion2.png").convert_alpha(), (40, 40))
+        self.frame2 = pygame.transform.scale(pygame.image.load("malus_confusion3.png").convert_alpha(), (40, 40))
+        self.frame3 = pygame.transform.scale(pygame.image.load("malus_confusion4.png").convert_alpha(), (40, 40))
+        self.frames = [self.frame0, self.frame1, self.frame2, self.frame3]
+
+    def animate(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > 50:  # en millisecondes
+            self.last_update = now
+            # if IfTimeHasPassed(50) :
+            self.current_frame = (self.current_frame + 1) % len(self.frames)  # 1%4=1; 2%4=2; 3%4=3; 4%4=0, 5%4=1 etc...
+            self.image = self.frames[self.current_frame]
+            self.mask = pygame.mask.from_surface(self.image)
+
     def update(self):
+        pygame.transform.scale(self.image, (40, 40))
+        self.animate()
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         #self.image, self.rect = rotate(self.image, angle)
@@ -410,17 +420,17 @@ while True:
                 break
 
         # Draw / render
-        if confused :
+        if confused:
             windowSurface.fill((random.randint(0, 255), 0, 0))
-        if not confused :
+        if not confused:
             windowSurface.fill(BACKGROUNDCOLOR)
         all_sprites.draw(windowSurface)
         drawText('Score: %s' % (score), font, windowSurface, 10, 0, RED)
         drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 40, RED)
         drawText('#Coins: %s' % (coins_number), font, windowSurface, 10, 80, YELLOW)
         drawText('Lives: %s' % (player.lives), font, windowSurface, 10, 120, RED)
-        pygame.draw.rect(windowSurface, (255, 0, 0), (player.rect.x + 30, player.rect.y - 10, 150, 10))
-        pygame.draw.rect(windowSurface, (0, 255, 0), (player.rect.x + 30, player.rect.y - 10, player.lives*150/player.max_lives, 10))
+        pygame.draw.rect(windowSurface, RED, (player.rect.x + 30, player.rect.y - 10, 150, 10))
+        pygame.draw.rect(windowSurface, GREEN, (player.rect.x + 30, player.rect.y - 10, player.lives*150/player.max_lives, 10))
         # *after* drawing everything, flip the display
         pygame.display.flip()
 
