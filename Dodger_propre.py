@@ -138,7 +138,7 @@ class Player(pygame.sprite.Sprite):
 class Mob(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        if score < 3000:
+        if score < 2500:
             self.image = pygame.image.load("plane_image.png")
             self.imageSize = random.randint(100, 300)
             self.image = pygame.transform.scale(self.image, (self.imageSize, self.imageSize))
@@ -160,7 +160,7 @@ class Mob(pygame.sprite.Sprite):
             self.rect.x = WINDOWWIDTH
             self.rect.y = random.randrange(-20, WINDOWHEIGHT / 2 - self.rect.height)
             self.speedx = random.randint(-5, -1)
-            if score > 3000:        #level 2, we can improve by adding more levels
+            if score > 2500:        #level 2, we can improve by adding more levels
                 self.image = pygame.transform.scale(pygame.image.load("OVNI.png"), (int(self.imageSize/1.5), int(self.imageSize/3)))
                 self.rect = self.image.get_rect()
                 self.rect.x = WINDOWWIDTH
@@ -432,7 +432,7 @@ while True:
         if confused:
             windowSurface.fill((random.randint(0, 255), 0, 0))
         if not confused:
-            if score < 3000:
+            if score < 2500:
                 windowSurface.fill(BACKGROUNDCOLOR)
             else:
                 windowSurface.blit(pygame.image.load("space_background.png"), (0, 0))
@@ -452,10 +452,12 @@ while True:
     gameOverSound.set_volume(0.06)
     gameOverSound.play()
     pygame.display.flip()
-    drawText('GAME OVER', font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3), RED)
-    drawText('Press a key to play again', font, windowSurface, (WINDOWWIDTH / 3) - 80, (WINDOWHEIGHT / 3) + 50, RED)
-    drawText('Score: %s' % (score), font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3) + 100, RED)
-    drawText('Top Score: %s' % (topScore), font, windowSurface, (WINDOWWIDTH / 3), (WINDOWHEIGHT / 3) + 150, RED)
+    if score < 2500 :
+        windowSurface.blit(pygame.image.load("Ecran_de_fin_jour.png"), (0, 0))
+    else:
+        windowSurface.blit(pygame.image.load("Ecran_de_fin_nuit.png"), (0, 0))
+    drawText('Score: %s' % (score), font, windowSurface, (WINDOWWIDTH / 3)+60, (WINDOWHEIGHT / 3)+30, RED)
+    drawText('Top Score: %s' % (topScore), font, windowSurface, (WINDOWWIDTH / 3)+30, (WINDOWHEIGHT / 3) + 80, RED)
     pygame.display.update()
     reset_groups()
     waitForPlayerToPressKey()
