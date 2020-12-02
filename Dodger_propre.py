@@ -252,7 +252,7 @@ class Malus(pygame.sprite.Sprite):
 class Tree(pygame.sprite.Sprite):
     def __init__(self):
         pygame.sprite.Sprite.__init__(self)
-        self.image = pygame.image.load("tree.png")
+        self.image = pygame.image.load("Arbre.png")
         self.imageSize = random.randint(60, int(WINDOWHEIGHT / 2 - ground_height))
         self.image = pygame.transform.scale(self.image, (self.imageSize, self.imageSize))
         self.rect = self.image.get_rect()
@@ -423,12 +423,12 @@ while True:
             windowSurface.fill(BACKGROUNDCOLOR)
         all_sprites.draw(windowSurface)
         drawText('Score: %s' % (score), font, windowSurface, 10, 0, RED)
+        drawText('(+ %s)' % (coins_number * 100), font, windowSurface, 200, 0, YELLOW)
         drawText('Top Score: %s' % (topScore), font, windowSurface, 10, 40, RED)
         drawText('#Coins: %s' % (coins_number), font, windowSurface, 10, 80, YELLOW)
-        drawText('Lives: %s' % (player.lives), font, windowSurface, 10, 120, RED)
-        pygame.draw.rect(windowSurface, RED, (player.rect.x + 30, player.rect.y - 10, 150, 10))
+        pygame.draw.rect(windowSurface, RED, (player.rect.x + 30, player.rect.y - 15, 150, 10))
         pygame.draw.rect(windowSurface, GREEN,
-                         (player.rect.x + 30, player.rect.y - 10, player.lives * 150 / player.max_lives, 10))
+                         (player.rect.x + 30, player.rect.y - 15, player.lives * 150 / player.max_lives, 10))
         # *after* drawing everything, flip the display
         pygame.display.flip()
 
