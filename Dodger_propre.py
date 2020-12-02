@@ -153,8 +153,12 @@ class Mob(pygame.sprite.Sprite):
             self.rect.x = WINDOWWIDTH
             self.rect.y = random.randrange(-20, WINDOWHEIGHT / 2 - self.rect.height)
             self.speedx = random.randint(-5, -1)
-        if score > 500:
-            self.image = pygame.transform.scale(pygame.image.load("Boss.png"), (self.imageSize,int(self.imageSize/1.5)))
+        if score > 500:        #level 2, we can improve by adding more levels
+            self.image = pygame.transform.scale(pygame.image.load("OVNI.png"), (int(self.imageSize/1.5),int(self.imageSize/3)))
+            self.rect = self.image.get_rect()
+            self.rect.x = WINDOWWIDTH
+            self.rect.y = random.randrange(-20, WINDOWHEIGHT / 2 - self.rect.height)
+            self.speedx = random.randint(-5, -1)
         self.mask = pygame.mask.from_surface(self.image)
 
 class Bullet(pygame.sprite.Sprite):
@@ -420,7 +424,7 @@ while True:
         if confused:
             windowSurface.fill((random.randint(0, 255), 0, 0))
         if not confused:
-            if score < 500:
+            if score < 5000:
                 windowSurface.fill(BACKGROUNDCOLOR)
             else:
                 windowSurface.blit(pygame.image.load("space_background.png"), (0, 0))
