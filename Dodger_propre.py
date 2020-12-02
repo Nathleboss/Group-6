@@ -291,7 +291,7 @@ pygame.display.set_caption("LA GUERRE")
 pygame.mouse.set_visible(False)
 font = pygame.font.SysFont(None, 48)
 
-# Sons
+# Sounds
 gameOverSound = pygame.mixer.Sound('MissionFailed.wav')
 lostLifeSound = pygame.mixer.Sound('Mayday Sound.wav')
 coinSound = pygame.mixer.Sound('smw_coin.wav')
