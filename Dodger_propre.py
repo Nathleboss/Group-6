@@ -145,9 +145,7 @@ class Mob(pygame.sprite.Sprite):
         self.rect.x = WINDOWWIDTH
         self.rect.y = random.randrange(-20, WINDOWHEIGHT / 2 - self.rect.height)
         self.speedx = random.randrange(-5, -1)
-        self.mask = pygame.mask.from_surface(self.image)
-        # if score > 5000:
-        # pass
+
 
     def update(self):
         self.rect.x += self.speedx
@@ -155,7 +153,9 @@ class Mob(pygame.sprite.Sprite):
             self.rect.x = WINDOWWIDTH
             self.rect.y = random.randrange(-20, WINDOWHEIGHT / 2 - self.rect.height)
             self.speedx = random.randint(-5, -1)
-
+        if score > 500:
+            self.image = pygame.transform.scale(pygame.image.load("Boss.png"), (self.imageSize,int(self.imageSize/1.5)))
+        self.mask = pygame.mask.from_surface(self.image)
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -420,7 +420,10 @@ while True:
         if confused:
             windowSurface.fill((random.randint(0, 255), 0, 0))
         if not confused:
-            windowSurface.fill(BACKGROUNDCOLOR)
+            if score < 500:
+                windowSurface.fill(BACKGROUNDCOLOR)
+            else:
+                windowSurface.blit(pygame.image.load("space_background.png"), (0, 0))
         all_sprites.draw(windowSurface)
         drawText('Score: %s' % (score), font, windowSurface, 10, 0, RED)
         drawText('(+ %s)' % (coins_number * 100), font, windowSurface, 200, 0, YELLOW)
