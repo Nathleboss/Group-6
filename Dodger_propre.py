@@ -10,7 +10,7 @@ WINDOWWIDTH = 900
 WINDOWHEIGHT = 600
 FPS = 100
 PLAYERMOVERATE = 5
-ADDNEWARBRERATE = 500
+ADDNEWARBRERATE = 350
 
 
 # TODO A faire autrement !! on peut sûrement faire avec un colliderect, mais ça nous dit pas pourquoi ça marche pas avec ground.height
@@ -56,6 +56,17 @@ def reset_groups():
         all_sprites.add(m)
         malus.add(m)
 
+def rotate(surface, angle):
+    rotated_surface = pygame.transform.rotozoom(surface, angle, 1)
+    rotated_rect = rotated_surface.get_rect()
+    return rotated_surface, rotated_rect
+
+def IfTimeHasPassed(time):
+    now = pygame.time.get_ticks()
+    last_update = 0
+    if now - last_update > time:
+        last_update = now
+        return True
 
 class Player(pygame.sprite.Sprite):
     def __init__(self):
@@ -72,16 +83,17 @@ class Player(pygame.sprite.Sprite):
         self.max_lives = self.lives
 
     def load_images(self):              #load_images() et animate() pour créer animation des hélices de l'hélicoptère
-        self.frame0 = pygame.image.load("heli-1.png")
-        self.frame1 = pygame.image.load("heli-2.png")
-        self.frame2 = pygame.image.load("heli-3.png")
-        self.frame3 = pygame.image.load("heli-4.png")
+        self.frame0 = pygame.image.load("heli-1.png").convert_alpha()
+        self.frame1 = pygame.image.load("heli-2.png").convert_alpha()
+        self.frame2 = pygame.image.load("heli-3.png").convert_alpha()
+        self.frame3 = pygame.image.load("heli-4.png").convert_alpha()
         self.frames = [self.frame0, self.frame1, self.frame2, self.frame3]
 
     def animate(self):
         now = pygame.time.get_ticks()
-        if now - self.last_update > 50 :           #en millisecondes
+        if now - self.last_update > 50:           #en millisecondes
             self.last_update = now
+        #if IfTimeHasPassed(50) :
             self.current_frame = (self.current_frame+1) % len(self.frames)      #1%4=1; 2%4=2; 3%4=3; 4%4=0, 5%4=1 etc...
             self.image = self.frames[self.current_frame]
             self.mask = pygame.mask.from_surface(self.image)
@@ -91,7 +103,7 @@ class Player(pygame.sprite.Sprite):
         self.speedx = 0
         self.speedy = 0
         keystate = pygame.key.get_pressed()
-        if confused == False :
+        if not confused:
             if keystate[pygame.K_LEFT]:
                 self.speedx = -5
             if keystate[pygame.K_RIGHT]:
@@ -99,10 +111,10 @@ class Player(pygame.sprite.Sprite):
             if keystate[pygame.K_UP]:
                 self.speedy = -5
             if keystate[pygame.K_DOWN]:
-                self.speedy = 5
+                self.speedy = 4                 #à cause de la gravité, pour avoir 1 + 4 = 5
             self.rect.x += self.speedx
             self.rect.y += self.speedy
-        else :
+        else:
             if keystate[pygame.K_LEFT]:
                 self.speedx = 5
             if keystate[pygame.K_RIGHT]:
@@ -120,7 +132,7 @@ class Player(pygame.sprite.Sprite):
         if self.rect.top <= 0:
             self.rect.top = 0
         #gravity
-        self.rect.y +=1
+        self.rect.y += 1
 
     def shoot(self):
         bullet = Bullet(self.rect.centerx + 60, self.rect.bottom - 5)
@@ -177,20 +189,20 @@ class Coin(pygame.sprite.Sprite):               #pourquoi pas faire une supercla
         self.image = pygame.transform.scale(self.image,(40,40))
         self.rect = self.image.get_rect()
         self.rect.x = WINDOWWIDTH
-        self.rect.y = random.randrange(0,WINDOWHEIGHT-100)
+        self.rect.y = random.randrange(0, WINDOWHEIGHT-100)
         self.speedx = -3
-        self.speedy = random.randrange(-3,3)
+        self.speedy = random.randrange(-3, 3)
         self.mask = pygame.mask.from_surface(self.image)
 
     def update(self):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         #déplacement "sinusoïdale":
-        if self.rect.bottom > WINDOWHEIGHT -100 :
-            self.speedy=  -3
-        if self.rect.top < 50 :
+        if self.rect.bottom > WINDOWHEIGHT -100:
+            self.speedy = -3
+        if self.rect.top < 50:
             self.speedy = 3
-        if self.rect.left < -self.rect.width or abs(self.rect.top) > WINDOWHEIGHT :       #si la pièce sort sur la gauche ou en haut/bas
+        if self.rect.left < -self.rect.width :       #si la pièce sort sur la gauche
             self.rect.x = WINDOWWIDTH
             self.rect.y = random.randrange(0, WINDOWHEIGHT - 100)
             self.speedx = -3
@@ -203,21 +215,22 @@ class Malus(pygame.sprite.Sprite):               #pourquoi pas faire une supercl
         self.image = pygame.transform.scale(self.image, (40, 40))
         self.rect = self.image.get_rect()
         self.rect.x = WINDOWWIDTH
-        self.rect.y = random.randrange(0,WINDOWHEIGHT-100)
+        self.rect.y = random.randrange(0, WINDOWHEIGHT-100)
         self.speedx = -3
-        self.speedy = random.randrange(-3,3)
+        self.speedy = random.randrange(-3, 3)
         self.mask = pygame.mask.from_surface(self.image)
         self.last_update = 0
 
     def update(self):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
+        #self.image, self.rect = (self.image, angle)
         #déplacement "sinusoïdale":
-        if self.rect.bottom > WINDOWHEIGHT -100 :
-            self.speedy=  -3
-        if self.rect.top < 10 :
+        if self.rect.bottom > WINDOWHEIGHT -100:
+            self.speedy = -3
+        if self.rect.top < 10:
             self.speedy = 3
-        if self.rect.left < -self.rect.width or abs(self.rect.top) > WINDOWHEIGHT :       #si la pièce sort sur la gauche ou en haut/bas
+        if self.rect.left < -self.rect.width:       #si le malus sort sur la gauche
             self.rect.x = WINDOWWIDTH
             self.rect.y = random.randrange(0, WINDOWHEIGHT - 100)
             self.speedx = -3
@@ -250,11 +263,8 @@ class Ground(pygame.sprite.Sprite):
         self.rect.y = WINDOWHEIGHT - self.rect.height
         self.speedx = -1
 
-
-
     def update(self):
         self.rect.x += self.speedx
-
         if self.rect.left <= -self.rect.width:
             self.rect.x = WINDOWWIDTH
             self.rect.y = WINDOWHEIGHT - self.rect.height
@@ -315,9 +325,10 @@ while True:
 
     while running:
         score += 1
+        angle += 1
         # Clock FPS
         mainClock.tick(FPS)
-        last_update = 0
+        #last_update = 0
         now = pygame.time.get_ticks()
         # Process input (event)
         for event in pygame.event.get():
@@ -371,8 +382,7 @@ while True:
             confused = True
             l_update = pygame.time.get_ticks()
 
-
-        if confused==True :
+        if confused:
             if now - l_update > 1000:  # en millisecondes
                 confused = False
 
@@ -426,5 +436,3 @@ while True:
     reset_groups()
     waitForPlayerToPressKey()
     gameOverSound.stop()
-
-#pygame.quit()
