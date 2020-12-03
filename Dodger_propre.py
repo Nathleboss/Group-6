@@ -71,7 +71,6 @@ class Player(pygame.sprite.Sprite):
         self.image = self.frames[0]
         self.rect = self.image.get_rect()
         self.rect.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2)
-        self.speed = 0
         self.mask = pygame.mask.from_surface(self.image)
         self.lives = 3
         self.max_lives = self.lives  # constant value = 3, necessary for the health bar
