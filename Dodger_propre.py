@@ -12,13 +12,13 @@ FPS = 100
 PLAYERMOVERATE = 5
 ADDNEWTREERATE = 350
 
-saveScore = open("saveScore.txt", "w")
-item = saveScore.read()
-if item == "":
-    savedScore = 0
-else:
-    savedScore = int(saveScore.read())
+saveScore = open("saveScore.txt", 'w')
+try:
+    topScore = int(saveScore.read())
+except:
+    topScore = 0
 
+print(int(topScore))
 def terminate():
     pygame.quit()
     sys.exit()
@@ -154,7 +154,8 @@ class Mob(pygame.sprite.Sprite):
         else:
             self.image = pygame.image.load("OVNI.png")
             self.imageSize = random.randint(100, 300)
-            self.image = pygame.transform.scale(pygame.image.load("OVNI.png"), (int(self.imageSize/1.5), int(self.imageSize/3)))
+            self.image = pygame.transform.scale(pygame.image.load("OVNI.png"),
+                                                (int(self.imageSize / 1.5), int(self.imageSize / 3)))
             self.rect = self.image.get_rect()
             self.rect.x = WINDOWWIDTH
             self.rect.y = random.randrange(-5, WINDOWHEIGHT / 2 - self.rect.height)
@@ -165,14 +166,16 @@ class Mob(pygame.sprite.Sprite):
             self.rect.x = WINDOWWIDTH
             self.rect.y = random.randrange(-25, WINDOWHEIGHT / 2 - self.rect.height)
             self.speedx = random.randint(-5, -1)
-            if score > 2500:        #level 2, we can improve by adding more levels
-                self.image = pygame.transform.scale(pygame.image.load("OVNI.png"), (int(self.imageSize/1.5), int(self.imageSize/3)))
+            if score > 2500:  # level 2, we can improve by adding more levels
+                self.image = pygame.transform.scale(pygame.image.load("OVNI.png"),
+                                                    (int(self.imageSize / 1.5), int(self.imageSize / 3)))
                 self.rect = self.image.get_rect()
                 self.rect.x = WINDOWWIDTH
-                self.rect.y = random.randrange(0, WINDOWHEIGHT/2 - self.rect.height)
+                self.rect.y = random.randrange(0, WINDOWHEIGHT / 2 - self.rect.height)
                 self.speedx = random.randint(-6, -2)
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x += self.speedx
+
 
 class Bullet(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -323,7 +326,6 @@ pygame.display.update()
 waitForPlayerToPressKey()
 
 coins_number = 0
-topScore = 0
 
 # Creation of groups
 all_sprites = pygame.sprite.Group()
@@ -336,7 +338,8 @@ trees = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
 
-ground_height = pygame.image.load("Sol.png").get_height()  # TODO, not optimal and coherent with the rest of the code, but it works.
+ground_height = pygame.image.load(
+    "Sol.png").get_height()  # TODO, not optimal and coherent with the rest of the code, but it works.
 confused = False
 
 # Game loop
@@ -378,7 +381,7 @@ while True:
 
         # collision bullet-mob
         hits_bullet = pygame.sprite.groupcollide(mobs, bullets, True, True,
-                                                  pygame.sprite.collide_mask)  #putting True kills the mob AND the bullet, returns a list
+                                                 pygame.sprite.collide_mask)  # putting True kills the mob AND the bullet, returns a list
         for hit in hits_bullet:  # each time we kill a mob, we recreate one
             m = Mob()
             all_sprites.add(m)
@@ -431,6 +434,8 @@ while True:
                 player = Player()  # necessary to reset appropriately
                 if score > topScore:
                     topScore = score
+                    with open("saveScore.txt", 'w') as file:
+                        file.write(str(topScore))
                 break
 
         # Draw / render
@@ -457,19 +462,14 @@ while True:
     gameOverSound.set_volume(0.06)
     gameOverSound.play()
     pygame.display.flip()
-    if score < 2500 :
+    if score < 2500:
         windowSurface.blit(pygame.image.load("Ecran_de_fin_jour.png"), (0, 0))
     else:
         windowSurface.blit(pygame.image.load("Ecran_de_fin_nuit.png"), (0, 0))
-    drawText('Score: %s' % (score), font, windowSurface, (WINDOWWIDTH / 3)+60, (WINDOWHEIGHT / 3)+30, RED)
-    drawText('Top Score: %s' % (topScore), font, windowSurface, (WINDOWWIDTH / 3)+30, (WINDOWHEIGHT / 3) + 80, RED)
+    drawText('Score: %s' % (score), font, windowSurface, (WINDOWWIDTH / 3) + 60, (WINDOWHEIGHT / 3) + 30, RED)
+    drawText('Top Score: %s' % (topScore), font, windowSurface, (WINDOWWIDTH / 3) + 30, (WINDOWHEIGHT / 3) + 80, RED)
     pygame.display.update()
     reset_groups()
     waitForPlayerToPressKey()
     gameOverSound.stop()
-    if topScore > savedScore:
-        saveScore.write(str(topScore))
-        saveScore.close()
-
-
-
+    print(int(score), int(topScore))
