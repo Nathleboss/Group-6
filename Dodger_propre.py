@@ -12,6 +12,8 @@ FPS = 100
 PLAYERMOVERATE = 5
 ADDNEWTREERATE = 350
 
+saveScore = open("saveScore.txt")
+savedScore = int(saveScore.read())
 
 def terminate():
     pygame.quit()
@@ -461,3 +463,8 @@ while True:
     reset_groups()
     waitForPlayerToPressKey()
     gameOverSound.stop()
+    if topScore > savedScore:
+        saveScore.write(topScore, "v")
+
+
+
