@@ -13,7 +13,11 @@ PLAYERMOVERATE = 5
 ADDNEWTREERATE = 350
 
 saveScore = open("saveScore.txt", "w")
-savedScore = int(saveScore.read())
+item = saveScore.read()
+if item == "":
+    savedScore = 0
+else:
+    savedScore = int(saveScore.read())
 
 def terminate():
     pygame.quit()
@@ -464,7 +468,7 @@ while True:
     waitForPlayerToPressKey()
     gameOverSound.stop()
     if topScore > savedScore:
-        saveScore.write(topScore)
+        saveScore.write(str(topScore))
         saveScore.close()
 
 
