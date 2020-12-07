@@ -12,7 +12,7 @@ FPS = 100
 PLAYERMOVERATE = 5
 ADDNEWTREERATE = 350
 
-saveScore = open("saveScore.txt")
+saveScore = open("saveScore.txt", "w")
 savedScore = int(saveScore.read())
 
 def terminate():
@@ -464,7 +464,8 @@ while True:
     waitForPlayerToPressKey()
     gameOverSound.stop()
     if topScore > savedScore:
-        saveScore.write(topScore, "v")
+        saveScore.write(topScore)
+        saveScore.close()
 
 
 
