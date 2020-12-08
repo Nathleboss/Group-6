@@ -18,7 +18,7 @@ try:
 except:
     topScore = 0
 
-print(int(topScore))
+
 def terminate():
     pygame.quit()
     sys.exit()
@@ -472,4 +472,3 @@ while True:
     reset_groups()
     waitForPlayerToPressKey()
     gameOverSound.stop()
-    print(int(score), int(topScore))
