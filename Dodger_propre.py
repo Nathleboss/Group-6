@@ -12,7 +12,7 @@ FPS = 100
 PLAYERMOVERATE = 5
 ADDNEWTREERATE = 350
 
-saveScore = open("saveScore.txt", 'w')
+saveScore = open("saveScore.txt", 'r')
 try:
     topScore = int(saveScore.read())
 except:
