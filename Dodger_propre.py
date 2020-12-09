@@ -145,7 +145,7 @@ class Mob(pygame.sprite.Sprite):
             self.image = pygame.transform.scale(self.image, (self.imageSize, self.imageSize))
             self.rect = self.image.get_rect()
             self.rect.x = WINDOWWIDTH
-            self.rect.y = random.randrange(-25, WINDOWHEIGHT / 2 - self.rect.height)
+            self.rect.y = random.randrange(-25, round(WINDOWHEIGHT / 2 - self.rect.height))
             self.speedx = random.randrange(-5, -1)
         else:
             self.image = pygame.image.load("OVNI.png")
@@ -154,21 +154,21 @@ class Mob(pygame.sprite.Sprite):
                                                 (int(self.imageSize / 1.5), int(self.imageSize / 3)))
             self.rect = self.image.get_rect()
             self.rect.x = WINDOWWIDTH
-            self.rect.y = random.randrange(-5, WINDOWHEIGHT / 2 - self.rect.height)
+            self.rect.y = random.randrange(-5, round(WINDOWHEIGHT / 2 - self.rect.height))
             self.speedx = random.randrange(-6, -2)
 
     def update(self):
         # if a mob gets past the left border of the screen, we teleport it to the right randomly
         if self.rect.left < -self.rect.width:
             self.rect.x = WINDOWWIDTH
-            self.rect.y = random.randrange(-25, WINDOWHEIGHT / 2 - self.rect.height)
+            self.rect.y = random.randrange(-25, round(WINDOWHEIGHT / 2 - self.rect.height))
             self.speedx = random.randint(-5, -1)
             if score > 2500:  # level 2, we can improve by adding more levels
                 self.image = pygame.transform.scale(pygame.image.load("OVNI.png"),
                                                     (int(self.imageSize / 1.5), int(self.imageSize / 3)))
                 self.rect = self.image.get_rect()
                 self.rect.x = WINDOWWIDTH
-                self.rect.y = random.randrange(0, WINDOWHEIGHT / 2 - self.rect.height)
+                self.rect.y = random.randrange(0, round(WINDOWHEIGHT / 2 - self.rect.height))
                 self.speedx = random.randint(-6, -2)
         self.mask = pygame.mask.from_surface(self.image)
         self.rect.x += self.speedx
