@@ -455,10 +455,12 @@ while True:
                 space_screen = pygame.transform.scale(space_screen, (WINDOWWIDTH, WINDOWHEIGHT))
                 windowSurface.blit(space_screen, (0, 0))
         all_sprites.draw(windowSurface)
+        #Overlay of the score, coins and TopScore
         drawText('Score: %s' % score, font, windowSurface, 10, 0, RED)
         drawText('(+ %s)' % (coins_number * 100), font, windowSurface, 200, 0, YELLOW)
         drawText('Top Score: %s' % topScore, font, windowSurface, 10, 40, RED)
         drawText('#Coins: %s' % coins_number, font, windowSurface, 10, 80, YELLOW)
+        #healthbar
         pygame.draw.rect(windowSurface, RED, (player.rect.x + 30, player.rect.y - 15, 150, 10))
         pygame.draw.rect(windowSurface, GREEN,
                          (player.rect.x + 30, player.rect.y - 15, round(player.lives * 150 / player.max_lives), 10))
@@ -484,3 +486,4 @@ while True:
     reset_groups()
     waitForPlayerToPressKey()
     gameOverSound.stop()
+
