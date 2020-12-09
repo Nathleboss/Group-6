@@ -112,9 +112,9 @@ class Player(pygame.sprite.Sprite):
             if keystate[pygame.K_RIGHT]:
                 self.speedx = -5
             if keystate[pygame.K_UP]:
-                self.speedy = 5
+                self.speedy = 6
             if keystate[pygame.K_DOWN]:
-                self.speedy = -5
+                self.speedy = -4
             self.rect.x += self.speedx
             self.rect.y += self.speedy
         if self.rect.right > WINDOWWIDTH:
