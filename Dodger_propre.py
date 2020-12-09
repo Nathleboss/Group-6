@@ -27,7 +27,7 @@ def terminate():
 def drawText(text, font, surface, x, y, TEXTCOLOR):
     textobj = font.render(text, 1, TEXTCOLOR)
     textrect = textobj.get_rect()
-    textrect.topleft = (x, y)
+    textrect.topleft = (round(x), round(y))
     surface.blit(textobj, textrect)
 
 
@@ -76,7 +76,7 @@ class Player(pygame.sprite.Sprite):
         self.load_images()
         self.image = self.frames[0]
         self.rect = self.image.get_rect()
-        self.rect.center = (WINDOWWIDTH / 2, WINDOWHEIGHT / 2)
+        self.rect.center = (round(WINDOWWIDTH / 2), round(WINDOWHEIGHT / 2))
         self.mask = pygame.mask.from_surface(self.image)
         self.lives = 3
         self.max_lives = self.lives  # constant value = 3, necessary for the health bar
@@ -453,7 +453,7 @@ while True:
         drawText('#Coins: %s' % (coins_number), font, windowSurface, 10, 80, YELLOW)
         pygame.draw.rect(windowSurface, RED, (player.rect.x + 30, player.rect.y - 15, 150, 10))
         pygame.draw.rect(windowSurface, GREEN,
-                         (player.rect.x + 30, player.rect.y - 15, player.lives * 150 / player.max_lives, 10))
+                         (player.rect.x + 30, player.rect.y - 15, round(player.lives * 150 / player.max_lives), 10))
         # *after* drawing everything, flip the display
         pygame.display.flip()
 
