@@ -101,7 +101,7 @@ class Player(pygame.sprite.Sprite):
             if keystate[pygame.K_RIGHT]:
                 self.speedx = 5
             if keystate[pygame.K_UP]:
-                self.speedy = -6        #because of gravity, to get 1 - 6 = -5
+                self.speedy = -6        # because of gravity, to get 1 - 6 = -5
             if keystate[pygame.K_DOWN]:
                 self.speedy = 4  # because of gravity, to get 1 + 4 = 5
             self.rect.x += self.speedx
@@ -195,7 +195,7 @@ class Coin(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (40, 40))
         self.rect = self.image.get_rect()
         self.rect.x = WINDOWWIDTH
-        self.rect.y = random.randrange(0, WINDOWHEIGHT - 100)
+        self.rect.y = random.randrange(0, round(WINDOWHEIGHT*5/6))
         self.speedx = -3
         self.speedy = random.randrange(-3, 3)
         self.mask = pygame.mask.from_surface(self.image)
@@ -204,13 +204,13 @@ class Coin(pygame.sprite.Sprite):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         # "sinusoidal" movement:
-        if self.rect.bottom > WINDOWHEIGHT - 100:
+        if self.rect.bottom > WINDOWHEIGHT*5/6:
             self.speedy = -3
         if self.rect.top < 50:
             self.speedy = 3
         if self.rect.left < -self.rect.width:  # if the coin gets past the left border of the screen
             self.rect.x = WINDOWWIDTH
-            self.rect.y = random.randrange(0, WINDOWHEIGHT - 100)
+            self.rect.y = random.randrange(0, round(WINDOWHEIGHT*5/6))
             self.speedx = -3
             self.speedy = random.randrange(-3, 3)
 
@@ -225,7 +225,7 @@ class Malus(pygame.sprite.Sprite):
         self.image = pygame.transform.scale(self.image, (40, 40))
         self.rect = self.image.get_rect()
         self.rect.x = WINDOWWIDTH
-        self.rect.y = random.randrange(0, WINDOWHEIGHT - 100)
+        self.rect.y = random.randrange(0, round(WINDOWHEIGHT*5/6))
         self.speedx = -3
         self.speedy = random.randrange(-3, 3)
         self.mask = pygame.mask.from_surface(self.image)
@@ -252,13 +252,13 @@ class Malus(pygame.sprite.Sprite):
         self.rect.x += self.speedx
         self.rect.y += self.speedy
         # "sinusoidal" movement:
-        if self.rect.bottom > WINDOWHEIGHT - 100:
+        if self.rect.bottom > WINDOWHEIGHT*5/6:
             self.speedy = -3
         if self.rect.top < 10:
             self.speedy = 3
-        if self.rect.left < -self.rect.width:  # si le malus sort sur la gauche
+        if self.rect.left < -self.rect.width:  # if the malus get past the left border, we teleport it randomly to the right
             self.rect.x = WINDOWWIDTH
-            self.rect.y = random.randrange(0, WINDOWHEIGHT - 100)
+            self.rect.y = random.randrange(0, round(WINDOWHEIGHT*5/6))
             self.speedx = -3
             self.speedy = random.randrange(-3, 3)
 
@@ -283,6 +283,7 @@ class Ground(pygame.sprite.Sprite):
     def __init__(self, position):
         pygame.sprite.Sprite.__init__(self)
         self.image = pygame.image.load("Sol.png")
+        self.image = pygame.transform.scale(self.image, (round(WINDOWWIDTH/2), round(WINDOWHEIGHT/8)))
         self.rect = self.image.get_rect()
         self.position = position
         self.rect.x = self.rect.width * self.position
@@ -315,6 +316,7 @@ pygame.mixer.music.set_volume(0.08)
 
 # Show the "Start" screen.
 Start_screen = pygame.image.load('Ecran_de_titre.png')
+Start_screen = pygame.transform.scale(Start_screen, (WINDOWWIDTH, WINDOWHEIGHT))
 windowSurface.blit(Start_screen, (0, 0))
 pygame.display.update()
 waitForPlayerToPressKey()
@@ -339,8 +341,9 @@ trees = pygame.sprite.Group()
 player = Player()
 all_sprites.add(player)
 
-ground_height = pygame.image.load(
-    "Sol.png").get_height()  # TODO, not optimal and coherent with the rest of the code, but it works.
+ground_height = pygame.transform.scale(pygame.image.load(
+    "Sol.png"), (round(WINDOWWIDTH/2), round(WINDOWHEIGHT/8))).get_height()  # TODO, not optimal and coherent with the rest of the code, but it works.
+print(ground_height)
 confused = False
 
 # Game loop
@@ -422,21 +425,20 @@ while True:
         # collisions player-tree
         hits_tree = pygame.sprite.spritecollide(player, trees, True, pygame.sprite.collide_mask)
         # if bad collision for player, then lose a lifepoint
-        if hits_mob or hits_tree or player.rect.bottom >= WINDOWHEIGHT - ground_height + 10:
+        if hits_mob or hits_tree or player.rect.bottom >= WINDOWHEIGHT - ground_height+5:   #+5 because of the player's rectangle that have 5px of "void"
             if hits_mob or hits_tree:
                 lostLifeSound.set_volume(0.15)
                 lostLifeSound.play()
                 for hit in hits_mob:
-                    player.lives -= 1  # TODO code invincibility for x seconds after losing a lifepoint, report
+                    player.lives -= 1
                 for hit in hits_tree:
                     player.lives -= 1
-            if player.lives <= 0 or player.rect.bottom >= WINDOWHEIGHT - ground_height:
+            if player.lives <= 0 or player.rect.bottom >= WINDOWHEIGHT - ground_height+5:
                 player = Player()  # necessary to reset appropriately
                 if score > topScore:
                     topScore = score
                     with open("saveScore.txt", 'w') as file:            #updating new Top Score
                         file.write(str(topScore))
-
                         saveScore.close()
                 break
 
@@ -447,7 +449,9 @@ while True:
             if score < 2500:
                 windowSurface.fill(BACKGROUNDCOLOR)
             else:
-                windowSurface.blit(pygame.image.load("space_background.png"), (0, 0))
+                space_screen = pygame.image.load("space_background.png")
+                space_screen = pygame.transform.scale(space_screen, (WINDOWWIDTH, WINDOWHEIGHT))
+                windowSurface.blit(space_screen, (0, 0))
         all_sprites.draw(windowSurface)
         drawText('Score: %s' % (score), font, windowSurface, 10, 0, RED)
         drawText('(+ %s)' % (coins_number * 100), font, windowSurface, 200, 0, YELLOW)
@@ -465,9 +469,13 @@ while True:
     gameOverSound.play()
     pygame.display.flip()
     if score < 2500:
-        windowSurface.blit(pygame.image.load("Ecran_de_fin_jour.png"), (0, 0))
+        end_screen = pygame.image.load("Ecran_de_fin_jour.png")
+        end_screen = pygame.transform.scale(end_screen, (WINDOWWIDTH, WINDOWHEIGHT))
+        windowSurface.blit(end_screen, (0, 0))
     else:
-        windowSurface.blit(pygame.image.load("Ecran_de_fin_nuit.png"), (0, 0))
+        end_screen = pygame.image.load("Ecran_de_fin_nuit.png")
+        end_screen = pygame.transform.scale(end_screen, (WINDOWWIDTH, WINDOWHEIGHT))
+        windowSurface.blit(end_screen, (0, 0))
     drawText('Score: %s' % (score), font, windowSurface, (WINDOWWIDTH / 3) + 60, (WINDOWHEIGHT / 3) + 30, RED)
     drawText('Top Score: %s' % (topScore), font, windowSurface, (WINDOWWIDTH / 3) + 30, (WINDOWHEIGHT / 3) + 80, RED)
     pygame.display.update()
