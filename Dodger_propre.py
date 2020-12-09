@@ -12,12 +12,6 @@ FPS = 100
 PLAYERMOVERATE = 5
 ADDNEWTREERATE = 350
 
-saveScore = open("saveScore.txt", 'r')
-try:
-    topScore = int(saveScore.read())
-except:
-    topScore = 0
-
 
 def terminate():
     pygame.quit()
@@ -107,7 +101,7 @@ class Player(pygame.sprite.Sprite):
             if keystate[pygame.K_RIGHT]:
                 self.speedx = 5
             if keystate[pygame.K_UP]:
-                self.speedy = -5
+                self.speedy = -6        #because of gravity, to get 1 - 6 = -5
             if keystate[pygame.K_DOWN]:
                 self.speedy = 4  # because of gravity, to get 1 + 4 = 5
             self.rect.x += self.speedx
@@ -326,6 +320,13 @@ pygame.display.update()
 waitForPlayerToPressKey()
 
 coins_number = 0
+#topScore = 0
+saveScore = open("saveScore.txt", 'r')      #loading former Top Score from this file
+try:
+    topScore = int(saveScore.read())
+except:
+    topScore = 0
+saveScore.close()
 
 # Creation of groups
 all_sprites = pygame.sprite.Group()
@@ -351,7 +352,6 @@ while True:
     treeAddCounter = 0
     running = True
     confused = False
-
     while running:
         score += 1
         # Clock FPS
@@ -434,8 +434,10 @@ while True:
                 player = Player()  # necessary to reset appropriately
                 if score > topScore:
                     topScore = score
-                    with open("saveScore.txt", 'w') as file:
+                    with open("saveScore.txt", 'w') as file:            #updating new Top Score
                         file.write(str(topScore))
+
+                        saveScore.close()
                 break
 
         # Draw / render
