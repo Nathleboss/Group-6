@@ -186,7 +186,7 @@ class Bullet(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.speedx
-        # kill it if touches no enemy and go too far
+        # kill it if touches no enemy and gets past the right border of the screen
         if self.rect.right > WINDOWWIDTH:
             self.kill()
 
