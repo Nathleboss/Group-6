@@ -280,6 +280,8 @@ class Tree(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.x += self.speedx
+        if self.rect.x < -self.rect.width:  # if a tree gets past the left border, we kill it
+            self.kill()
 
 
 class Ground(pygame.sprite.Sprite):
@@ -374,7 +376,6 @@ while True:
                     terminate()
 
         treeAddCounter += 1
-
         if treeAddCounter == ADDNEWTREERATE:
             treeAddCounter = 0
             t = Tree()
@@ -386,7 +387,7 @@ while True:
 
         # collision bullet-mob
         hits_bullet = pygame.sprite.groupcollide(mobs, bullets, True, True,
-                                pygame.sprite.collide_mask)  # putting True kills the mob & the bullet, returns a list
+                                                 pygame.sprite.collide_mask)  # putting True kills the mob & the bullet, returns a list
         for hit in hits_bullet:  # each time we kill a mob, we recreate one
             m = Mob()
             all_sprites.add(m)
@@ -455,12 +456,12 @@ while True:
                 space_screen = pygame.transform.scale(space_screen, (WINDOWWIDTH, WINDOWHEIGHT))
                 windowSurface.blit(space_screen, (0, 0))
         all_sprites.draw(windowSurface)
-        #Overlay of the score, coins and TopScore
+        # Overlay of the score, coins and TopScore
         drawText('Score: %s' % score, font, windowSurface, 10, 0, RED)
         drawText('(+ %s)' % (coins_number * 100), font, windowSurface, 200, 0, YELLOW)
         drawText('Top Score: %s' % topScore, font, windowSurface, 10, 40, RED)
         drawText('#Coins: %s' % coins_number, font, windowSurface, 10, 80, YELLOW)
-        #healthbar
+        # healthbar
         pygame.draw.rect(windowSurface, RED, (player.rect.x + 30, player.rect.y - 15, 150, 10))
         pygame.draw.rect(windowSurface, GREEN,
                          (player.rect.x + 30, player.rect.y - 15, round(player.lives * 150 / player.max_lives), 10))
@@ -486,4 +487,3 @@ while True:
     reset_groups()
     waitForPlayerToPressKey()
     gameOverSound.stop()
-
